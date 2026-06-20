@@ -1,0 +1,167 @@
+import { Sun, Moon, Download, Menu, X, ArrowLeft, Terminal } from 'lucide-react';
+import { useState } from 'react';
+
+interface HeaderProps {
+  isDarkMode: boolean;
+  setIsDarkMode: (val: boolean) => void;
+  selectedProjectSlug: string | null;
+  onBackToHome: () => void;
+  onResumeClick: () => void;
+}
+
+export default function Header({
+  isDarkMode,
+  setIsDarkMode,
+  selectedProjectSlug,
+  onBackToHome,
+  onResumeClick
+}: HeaderProps) {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const navItems = [
+    { label: 'Projects', href: '#projects' },
+    { label: 'Skills', href: '#skills' },
+    { label: 'Experience', href: '#experience' },
+    { label: 'About', href: '#about' },
+    { label: 'Contact', href: '#contact' },
+  ];
+
+  const handleNavClick = (href: string) => {
+    setIsMobileMenuOpen(false);
+    if (selectedProjectSlug) {
+      onBackToHome();
+      // Wait for re-render before scrolling
+      setTimeout(() => {
+        const el = document.querySelector(href);
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    } else {
+      const el = document.querySelector(href);
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  return (
+    <nav className="sticky top-0 z-50 w-full border-b border-zinc-200/80 bg-zinc-50/85 backdrop-blur-md dark:border-zinc-800/80 dark:bg-zinc-950/85 transition-colors duration-300">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div className="flex h-14 items-center justify-between">
+          
+          {/* Logo / Left side */}
+          <div className="flex items-center gap-4">
+            {selectedProjectSlug ? (
+              <button
+                onClick={onBackToHome}
+                id="btn-nav-back"
+                className="group flex items-center gap-2 rounded-md border border-zinc-200 bg-white px-2.5 py-1 text-xs font-medium text-zinc-700 shadow-sm transition-all hover:bg-zinc-50 active:scale-95 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800/80"
+              >
+                <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5" />
+                <span>Back to Home</span>
+              </button>
+            ) : (
+              <a
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                id="header-brand"
+                className="flex items-center gap-2 font-mono text-sm font-bold tracking-tight text-zinc-900 dark:text-zinc-100"
+              >
+                <Terminal className="h-4 w-4 text-blue-500" />
+                <span>khalid.mohamed( )</span>
+              </a>
+            )}
+          </div>
+
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center gap-6">
+            {!selectedProjectSlug && (
+              <div className="flex items-center gap-5">
+                {navItems.map((item) => (
+                  <button
+                    key={item.label}
+                    onClick={() => handleNavClick(item.href)}
+                    className="text-xs font-medium text-zinc-600 hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-zinc-100 transition-colors"
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            <div className="h-4 w-px bg-zinc-200 dark:bg-zinc-800" />
+
+            {/* Utility buttons */}
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setIsDarkMode(!isDarkMode)}
+                id="btn-theme-switcher"
+                aria-label="Toggle theme"
+                className="rounded-md p-1.5 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-900 dark:hover:text-zinc-100 transition-colors"
+              >
+                {isDarkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+              </button>
+
+              <button
+                onClick={onResumeClick}
+                id="btn-header-resume"
+                className="flex items-center gap-1.5 rounded-md bg-zinc-900 px-3 py-1.5 text-xs font-medium text-zinc-50 shadow hover:bg-zinc-800 active:scale-95 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200 transition-all cursor-pointer"
+              >
+                <Download className="h-3.5 w-3.5" />
+                <span>Resume</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Mobile actions & hamburger indicator */}
+          <div className="flex md:hidden items-center gap-2">
+            <button
+              onClick={() => setIsDarkMode(!isDarkMode)}
+              id="btn-theme-switcher-mobile"
+              aria-label="Toggle theme"
+              className="rounded-md p-1.5 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-900 dark:hover:text-zinc-100 transition-colors"
+            >
+              {isDarkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            </button>
+
+            <button
+              onClick={onResumeClick}
+              id="btn-header-resume-mobile"
+              aria-label="Download Resume"
+              className="rounded-md p-1.5 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-900 dark:hover:text-zinc-100 transition-colors"
+            >
+              <Download className="h-4 w-4" />
+            </button>
+
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              id="btn-mobile-menu-toggle"
+              aria-label="Toggle mobile menu"
+              className="rounded-md p-1.5 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-900 dark:hover:text-zinc-100 transition-colors"
+            >
+              {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+      {/* Mobile Menu expanded list */}
+      {isMobileMenuOpen && !selectedProjectSlug && (
+        <div className="md:hidden border-t border-zinc-200 bg-zinc-50 px-4 py-3 dark:border-zinc-800 dark:bg-zinc-950 transition-all">
+          <div className="flex flex-col gap-2.5">
+            {navItems.map((item) => (
+              <button
+                key={item.label}
+                onClick={() => handleNavClick(item.href)}
+                className="w-full text-left py-2 text-xs font-semibold text-zinc-600 hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-zinc-100"
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    </nav>
+  );
+}
