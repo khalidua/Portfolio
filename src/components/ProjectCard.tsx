@@ -1,335 +1,285 @@
+import { useState } from 'react';
 import { Project } from '../types';
-import { Github, ExternalLink, ArrowRight, Shield, Cpu, Play, MessageSquare, Trophy, Network } from 'lucide-react';
+import { 
+  Github, 
+  ExternalLink, 
+  ArrowRight, 
+  Shield, 
+  Cpu, 
+  Play, 
+  MessageSquare, 
+  Trophy, 
+  Network, 
+  Search, 
+  Database,
+  ChevronLeft,
+  ChevronRight 
+} from 'lucide-react';
 
 interface ProjectCardProps {
-  key?: string;
   project: Project;
   onSelect: (slug: string) => void;
 }
 
+interface SlideInfo {
+  title: string;
+  subtitle: string;
+  icon: any;
+  imageSrc?: string;
+}
+
+const PlaceholderCard = ({ title, subtitle, icon: Icon, imageSrc }: { title: string, subtitle: string, icon: any, imageSrc?: string }) => {
+  const [imageFailed, setImageFailed] = useState(false);
+
+  if (imageSrc && imageSrc !== '' && !imageFailed) {
+    return (
+      <div className="w-full shrink-0 snap-center aspect-video relative rounded-lg overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-zinc-950">
+        <img 
+          src={imageSrc} 
+          alt={title} 
+          loading="lazy"
+          onError={() => setImageFailed(true)}
+          className="w-full h-full object-cover" 
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div className="w-full shrink-0 snap-center aspect-video relative flex flex-col items-center justify-center p-6 border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/30 rounded-lg select-none text-center">
+      <div className="flex flex-col items-center gap-2.5 max-w-[80%]">
+        <h4 className="text-lg sm:text-2xl font-bold text-zinc-800 dark:text-zinc-200 font-sans tracking-tight">
+          {title}
+        </h4>
+        <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 font-sans leading-normal">
+          {subtitle}
+        </p>
+        <span className="text-[8px] font-mono text-zinc-300 dark:text-zinc-700 uppercase tracking-widest mt-2">
+          Future Screenshot
+        </span>
+      </div>
+    </div>
+  );
+};
+
 export default function ProjectCard({ project, onSelect }: ProjectCardProps) {
-  
-  // Custom interactive CSS mockup layouts based on each specific project
-  const renderInteractiveMockup = () => {
-    switch (project.slug) {
-      case 'microservices-social-platform':
-        return (
-          <div className="relative h-full w-full bg-zinc-950 p-4 font-mono text-[9px] text-zinc-400 flex flex-col justify-between overflow-hidden">
-            <div className="flex items-center justify-between border-b border-zinc-900 pb-1.5 mb-1.5">
-              <div className="flex items-center gap-1.5">
-                <span className="h-2 w-2 rounded-full bg-red-500" />
-                <span className="h-2 w-2 rounded-full bg-amber-500" />
-                <span className="h-2 w-2 rounded-full bg-green-500" />
-                <span className="text-zinc-500 text-[8px] ml-1">Go Orchestrator Pipeline v1.2</span>
-              </div>
-              <span className="text-emerald-500 bg-emerald-500/10 px-1 rounded text-[8px]">ACTIVE</span>
-            </div>
-            
-            <div className="flex-1 flex flex-col justify-center gap-2">
-              <div className="flex items-center justify-center gap-2">
-                <div className="rounded border border-zinc-700 bg-zinc-900 px-2 py-1 text-center shadow-sm">
-                  <div className="text-white font-bold font-mono">Gateway</div>
-                  <div className="text-[7.5px] text-blue-400">gRPC proxy</div>
-                </div>
-                <div className="text-zinc-500">→</div>
-                <div className="rounded border border-blue-500 bg-blue-950 px-2 py-1 text-center shadow-sm relative">
-                  <div className="text-blue-400 font-bold font-mono">Kafka Broker</div>
-                  <div className="text-[7.5px] text-blue-300">"PostCreated"</div>
-                  <span className="absolute -top-1 -right-1 flex h-1.5 w-1.5"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span><span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-blue-500"></span></span>
-                </div>
-                <div className="text-zinc-500">→</div>
-                <div className="rounded border border-zinc-700 bg-zinc-900 px-2 py-1 text-center shadow-sm">
-                  <div className="text-white font-bold font-mono">Feed Worker</div>
-                  <div className="text-[7.5px] text-emerald-400">Redis write</div>
-                </div>
-              </div>
-              
-              <div className="text-center font-mono text-[7.5px] text-zinc-500 mt-1">
-                [Load test] Concurrency: 12,000 req/sec | Avg latency: <span className="text-emerald-400">28.4ms</span>
-              </div>
-            </div>
-            
-            <div className="border-t border-zinc-900 pt-1 text-[8px] text-zinc-600 flex justify-between">
-              <span>Port: :3000/api/social</span>
-              <span>Worker Node: #1-A</span>
-            </div>
-          </div>
-        );
+  const [activeSlide, setActiveSlide] = useState(0);
 
-      case 'clipsphere-pro':
-        return (
-          <div className="relative h-full w-full bg-zinc-900/90 dark:bg-zinc-950 p-4 flex flex-col justify-between overflow-hidden">
-            <div className="flex items-center justify-between border-b border-zinc-200/50 dark:border-zinc-800 pb-2">
-              <div className="flex items-center gap-1.5">
-                <Play className="h-3 w-3 text-emerald-500 fill-emerald-500/20" />
-                <span className="text-zinc-800 dark:text-zinc-300 font-mono text-[10px] font-bold">ClipSphere Engine</span>
-              </div>
-              <span className="text-[8px] text-zinc-400 dark:text-zinc-500 font-mono">AWS S3 Uplink</span>
-            </div>
-
-            <div className="flex-1 flex flex-col justify-center gap-2.5 py-1">
-              <div className="space-y-1">
-                <div className="flex justify-between items-center text-[9px] font-mono text-zinc-600 dark:text-zinc-400">
-                  <span>Uploading: raw_product_promo.mov</span>
-                  <span className="text-blue-500 font-bold">100%</span>
-                </div>
-                <div className="w-full bg-zinc-200 dark:bg-zinc-800 rounded-full h-1.5 overflow-hidden">
-                  <div className="bg-blue-500 h-1.5 rounded-full" style={{ width: '100%' }}></div>
-                </div>
-              </div>
-
-              <div className="space-y-1.5">
-                <div className="flex justify-between items-center text-[9px] font-mono text-zinc-600 dark:text-zinc-400">
-                  <span className="flex items-center gap-1"><Cpu className="h-3 w-3 inline text-emerald-500 animate-spin" /> Transcoding 1080p Profile...</span>
-                  <span className="text-emerald-500 font-bold">78%</span>
-                </div>
-                <div className="w-full bg-zinc-200 dark:bg-zinc-800 rounded-full h-1.5 overflow-hidden">
-                  <div className="bg-emerald-500 h-1.5 rounded-full" style={{ width: '78%' }}></div>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex justify-between text-[8px] border-t border-zinc-200/50 dark:border-zinc-805 pt-2 text-zinc-500 font-mono">
-              <span>Transcoder: BullMQ</span>
-              <span className="text-emerald-500 font-medium">Stripe webhook READY</span>
-            </div>
-          </div>
-        );
-
-      case 'ephemeral-hybrid-messenger':
-        return (
-          <div className="relative h-full w-full bg-zinc-950 p-4 font-mono text-[9px] text-zinc-400 flex flex-col justify-between overflow-hidden">
-            <div className="flex items-center justify-between border-b border-zinc-900 pb-1.5 mb-1 bg-zinc-950">
-              <div className="flex items-center gap-1">
-                <MessageSquare className="h-3 w-3 text-amber-500" />
-                <span className="text-[8.5px] font-bold text-zinc-300">E2EE Chat Tunnel</span>
-              </div>
-              <span className="text-[8px] text-amber-500 bg-amber-500/10 px-1 rounded">SECURE SOCKETS</span>
-            </div>
-
-            <div className="flex-1 flex flex-col gap-2.5 justify-center py-2 text-[8px]">
-              {/* Alice Msg */}
-              <div className="space-y-0.5">
-                <div className="text-zinc-500 flex justify-between">
-                  <span>From: Alice (RSA-2048)</span>
-                  <span className="text-zinc-600">10:06:54 AM</span>
-                </div>
-                <div className="bg-zinc-900 text-zinc-200 rounded p-1 border border-zinc-800 text-[7.5px] overflow-hidden whitespace-nowrap text-ellipsis">
-                  U2FsdGVkX19tMyU2Y+8ZkWY77rR9O2NlC6V...
-                </div>
-              </div>
-
-              {/* Bob Msg */}
-              <div className="space-y-0.5">
-                <div className="text-amber-400 flex justify-between">
-                  <span>To: Bob (AES Decrypted)</span>
-                  <span className="text-zinc-600">TTL: <span className="text-rose-500 font-bold animate-pulse">4s</span></span>
-                </div>
-                <div className="bg-amber-500/10 text-amber-300 rounded p-1 border border-amber-500/20 text-[8px]">
-                  "Zero metadata logs saved on server RAM."
-                </div>
-              </div>
-            </div>
-
-            <div className="border-t border-zinc-900 pt-1 text-[8px] text-zinc-600 flex justify-between items-center font-mono">
-              <span className="flex items-center gap-1"><Shield className="h-2.5 w-2.5 text-zinc-505" /> AES-256 GCM</span>
-              <span>Redis Cache TTL</span>
-            </div>
-          </div>
-        );
-
-      case 'threat-flow-ml-classifier':
-        return (
-          <div className="relative h-full w-full bg-zinc-950 p-4 font-mono text-[9px] text-zinc-400 flex flex-col justify-between overflow-hidden">
-            <div className="flex items-center justify-between border-b border-zinc-900 pb-1.5 relative">
-              <div className="flex items-center gap-1">
-                <Network className="h-3.5 w-3.5 text-blue-400" />
-                <span className="text-[8.5px] font-bold text-zinc-300">Intrusion Auditing Model</span>
-              </div>
-              <span className="text-rose-400 bg-rose-500/10 px-1 border border-rose-505/20 rounded text-[7.5px]">ATTACK FLAGGED</span>
-            </div>
-
-            <div className="flex-1 flex items-center justify-between gap-2.5 my-1">
-              <div className="space-y-1 flex-1 text-[8px]">
-                <div className="flex justify-between">
-                  <span>ROC-AUC:</span>
-                  <span className="text-emerald-400 font-bold">0.992</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>SMOTE over-sample:</span>
-                  <span className="text-blue-400 font-bold">Rescaled</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Classifier Mode:</span>
-                  <span className="text-zinc-300 font-bold">DNN + RF</span>
-                </div>
-              </div>
-
-              {/* Minimal SVG Grid Visualization */}
-              <div className="h-14 w-18 border border-zinc-905 bg-zinc-900/50 rounded flex items-center justify-center p-0.5 relative overflow-hidden">
-                <svg viewBox="0 0 100 50" className="w-full h-full text-blue-500">
-                  <path
-                    d="M 0 45 L 20 40 L 40 45 L 60 10 L 80 8 L 100 48"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    className="animate-pulse"
-                  />
-                  <line x1="60" y1="0" x2="60" y2="50" stroke="#f43f5e" strokeWidth="1" strokeDasharray="2" />
-                </svg>
-                <span className="absolute top-1 right-1 text-[6.5px] text-rose-500 font-bold bg-rose-950/80 px-0.5 rounded">DDoS</span>
-              </div>
-            </div>
-
-            <div className="border-t border-zinc-900 pt-1 text-[8.5px] text-zinc-500 flex justify-between">
-              <span>Accuracy: <span className="text-emerald-400 font-bold">98.4%</span></span>
-              <span>Features PCA: 12/40</span>
-            </div>
-          </div>
-        );
-
-      case 'zc-league-hub':
-        return (
-          <div className="relative h-full w-full bg-zinc-90 bg-white dark:bg-zinc-950 p-4 flex flex-col justify-between overflow-hidden">
-            <div className="flex items-center justify-between border-b border-zinc-200/50 dark:border-zinc-800 pb-2">
-              <div className="flex items-center gap-1">
-                <Trophy className="h-3 w-3 text-amber-500" />
-                <span className="text-zinc-800 dark:text-zinc-300 font-mono text-[9.5px] font-bold">ZC Tournament Bracket</span>
-              </div>
-              <span className="text-[7.5px] text-zinc-400 font-mono flex items-center gap-1">
-                <span className="inline-block h-1.5 w-1.5 bg-green-500 rounded-full animate-ping" /> Live Sync
-              </span>
-            </div>
-
-            {/* Bracket Mock diagram */}
-            <div className="flex-1 flex items-center justify-center gap-3.5 text-[8.5px]">
-              {/* Semi-finals */}
-              <div className="space-y-2 font-mono">
-                <div className="border border-zinc-200 dark:border-zinc-800 rounded bg-white/60 dark:bg-zinc-900 p-1 flex justify-between w-18">
-                  <span className="text-zinc-500">CS Pirates</span>
-                  <span className="font-bold text-zinc-800 dark:text-zinc-200">3</span>
-                </div>
-                <div className="border border-pink-500/20 rounded bg-zinc-100 dark:bg-pink-950/20 p-1 flex justify-between w-18 border-l-2 border-l-pink-500">
-                  <span className="text-zinc-500 truncate">MECH Titans</span>
-                  <span className="font-bold text-pink-500">1</span>
-                </div>
-              </div>
-
-              <div className="w-4 h-px bg-zinc-200 dark:bg-zinc-800 relative">
-                <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-blue-500" />
-              </div>
-
-              {/* Finals winner */}
-              <div className="font-mono">
-                <div className="border border-blue-500 rounded bg-blue-950/10 dark:bg-blue-900/10 p-1.5 flex flex-col items-center w-18 border-t-2 border-t-blue-500 shadow-sm shadow-blue-500/10">
-                  <span className="text-[7px] text-blue-500 font-bold uppercase tracking-wider">CHAMPION</span>
-                  <span className="font-medium text-zinc-800 dark:text-zinc-100 truncate w-full text-center">CS Pirates</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex justify-between text-[8px] border-t border-zinc-200/50 dark:border-zinc-805 pt-2 text-zinc-500 font-mono">
-              <span>Sockets: Active</span>
-              <span className="text-zinc-400">100+ Live Users</span>
-            </div>
-          </div>
-        );
-
+  const getProjectSlides = (slug: string): SlideInfo[] => {
+    switch (slug) {
+      case 'clipsphere':
+        return [
+          { title: "Homepage Dashboard", subtitle: "Video feed and user dashboard", icon: Play, imageSrc: "/images/projects/clipsphere/homepage-dashboard.webp" },
+          { title: "Upload Interface", subtitle: "Drag & drop video upload interface", icon: Cpu, imageSrc: "/images/projects/clipsphere/upload-interface.webp" },
+          { title: "Processing Queue", subtitle: "Encoding progress and processing pipeline", icon: Database, imageSrc: "/images/projects/clipsphere/processing-queue.webp" },
+        ];
+      case 'hybrid-ephemeral-messenger':
+        return [
+          { title: "Chat Interface", subtitle: "Real-time conversation room", icon: MessageSquare, imageSrc: "/images/projects/messenger/chat-interface.webp" },
+          { title: "Login Screen", subtitle: "Secure login and account access", icon: Shield, imageSrc: "/images/projects/messenger/login-screen.webp" },
+          { title: "Message Expiration", subtitle: "Automatic message expiration (TTL)", icon: Cpu, imageSrc: "/images/projects/messenger/auto-delete-messages.webp" },
+        ];
+      case 'zc-league':
+        return [
+          { title: "League Dashboard", subtitle: "Competitions and live match overview", icon: Trophy, imageSrc: "/images/projects/zc-league/league-dashboard.webp" },
+          { title: "Standings", subtitle: "League tables and points standings", icon: Network, imageSrc: "/images/projects/zc-league/league-table.webp" },
+          { title: "Match Details", subtitle: "Fixtures, scores, and stats", icon: Database, imageSrc: "/images/projects/zc-league/match-details.webp" },
+        ];
+      case 'inkix':
+        return [
+          { title: "Shoe Customizer", subtitle: "Interactive shoe designer and builder", icon: Cpu, imageSrc: "/images/projects/inkix/shoe-customizer.webp" },
+          { title: "Home Page", subtitle: "Landing page and featured products", icon: Play, imageSrc: "/images/projects/inkix/home-page.webp" },
+          { title: "Product Preview", subtitle: "Final customized shoe before checkout", icon: Database, imageSrc: "/images/projects/inkix/product-preview.webp" },
+        ];
+      case 'bingebox':
+        return [
+          { title: "Streaming Homepage", subtitle: "Featured movies and recommendations", icon: Play, imageSrc: "/images/projects/bingebox/homepage.webp" },
+          { title: "Movie Details", subtitle: "Movie information and watch options", icon: Database, imageSrc: "/images/projects/bingebox/movie-details.webp" },
+          { title: "Watchlist", subtitle: "Saved content and user library", icon: Play, imageSrc: "/images/projects/bingebox/watchlist.webp" },
+        ];
+      case 'social-network':
+        return [
+          { title: "News Feed", subtitle: "Dynamic post scroll and live interactions", icon: Network, imageSrc: "/images/projects/social-backend/news-feed.webp" },
+          { title: "Architecture Diagram", subtitle: "Backend controllers, routes, and services", icon: Cpu, imageSrc: "/images/projects/social-backend/system-architecture.webp" },
+          { title: "Service Communication", subtitle: "Socket.IO events flow and REST APIs", icon: Database, imageSrc: "/images/projects/social-backend/event-flow.webp" },
+        ];
       default:
-        return (
-          <div className="h-full w-full bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center font-mono text-zinc-400">
-            [Technical Outline Placeholder]
-          </div>
-        );
+        return [];
     }
   };
 
+  const slides = getProjectSlides(project.slug);
+
   return (
-    <div className="group flex flex-col h-full border border-zinc-200 dark:border-zinc-800 bg-white/30 dark:bg-zinc-900/20 rounded-lg overflow-hidden hover:border-blue-500/50 focus-within:border-blue-500/50 transition-all duration-300 hover:-translate-y-0.5">
+    <div className="group flex flex-col h-full border border-zinc-200 dark:border-zinc-800/80 bg-white/40 dark:bg-zinc-900/10 rounded-lg overflow-hidden hover:border-blue-500/30 transition-all duration-300 hover:-translate-y-0.5">
       
-      {/* Dynamic Terminal / Dashboard representation of project code */}
-      <div className="aspect-video w-full overflow-hidden border-b border-zinc-200/80 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 select-none">
-        {renderInteractiveMockup()}
+      {/* Screenshot Gallery Carousel */}
+      <div className="relative aspect-video w-full overflow-hidden border-b border-zinc-200 dark:border-zinc-800 bg-zinc-950 select-none group/gallery">
+        <div 
+          id={`gallery-${project.id}`}
+          className="flex h-full w-full overflow-x-auto snap-x snap-mandatory scroll-smooth scrollbar-none"
+          onScroll={(e) => {
+            const container = e.currentTarget;
+            const slideWidth = container.clientWidth;
+            const currentSlide = Math.round(container.scrollLeft / slideWidth);
+            setActiveSlide(currentSlide);
+          }}
+        >
+          {slides.map((slide, idx) => (
+            <PlaceholderCard 
+              key={idx}
+              title={slide.title}
+              subtitle={slide.subtitle}
+              icon={slide.icon}
+              imageSrc={slide.imageSrc}
+            />
+          ))}
+        </div>
+
+        {/* Carousel controls - visible on hover */}
+        {slides.length > 1 && (
+          <>
+            {/* Left arrow */}
+            {activeSlide > 0 && (
+              <button
+                onClick={() => {
+                  const container = document.getElementById(`gallery-${project.id}`);
+                  if (container) {
+                    container.scrollTo({
+                      left: container.scrollLeft - container.clientWidth,
+                      behavior: 'smooth'
+                    });
+                  }
+                }}
+                aria-label="Previous screenshot"
+                className="absolute left-2.5 top-1/2 -translate-y-1/2 flex h-7 w-7 items-center justify-center rounded-full border border-zinc-200 bg-white/90 text-zinc-700 shadow-xs hover:bg-white dark:border-zinc-800 dark:bg-zinc-900/90 dark:text-zinc-300 dark:hover:bg-zinc-900 opacity-0 group-hover/gallery:opacity-100 transition-opacity duration-300 cursor-pointer focus-visible:opacity-100"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </button>
+            )}
+
+            {/* Right arrow */}
+            {activeSlide < slides.length - 1 && (
+              <button
+                onClick={() => {
+                  const container = document.getElementById(`gallery-${project.id}`);
+                  if (container) {
+                    container.scrollTo({
+                      left: container.scrollLeft + container.clientWidth,
+                      behavior: 'smooth'
+                    });
+                  }
+                }}
+                aria-label="Next screenshot"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 flex h-7 w-7 items-center justify-center rounded-full border border-zinc-200 bg-white/90 text-zinc-700 shadow-xs hover:bg-white dark:border-zinc-800 dark:bg-zinc-900/90 dark:text-zinc-300 dark:hover:bg-zinc-900 opacity-0 group-hover/gallery:opacity-100 transition-opacity duration-300 cursor-pointer focus-visible:opacity-100"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </button>
+            )}
+
+            {/* Pagination dots indicator */}
+            <div className="absolute bottom-2.5 left-1/2 -translate-x-1/2 flex gap-1.5 z-10 bg-zinc-950/40 backdrop-blur-xs px-2 py-1 rounded-full border border-white/5">
+              {slides.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => {
+                    const container = document.getElementById(`gallery-${project.id}`);
+                    if (container) {
+                      container.scrollTo({
+                        left: idx * container.clientWidth,
+                        behavior: 'smooth'
+                      });
+                    }
+                  }}
+                  aria-label={`Go to screenshot ${idx + 1}`}
+                  className={`h-1.5 w-1.5 rounded-full transition-all duration-300 cursor-pointer ${
+                    activeSlide === idx 
+                      ? 'bg-blue-500 w-3' 
+                      : 'bg-zinc-450 dark:bg-zinc-600'
+                  }`}
+                />
+              ))}
+            </div>
+          </>
+        )}
       </div>
 
-      <div className="p-5 flex-1 flex flex-col justify-between">
-        <div className="space-y-2">
+      {/* Project Meta Information */}
+      <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
+        <div className="space-y-3">
           
-          {/* Tag Category indicators & Meta details */}
+          {/* Project Header details */}
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-mono uppercase tracking-wider text-blue-600 dark:text-blue-400 font-bold">
-              {project.category === 'backend' ? 'Backend Architecture' :
-               project.category === 'fullstack' ? 'Full-Stack Hub' :
-               project.category === 'security' ? 'Security & Encryption' :
-               project.category === 'ml' ? 'AI & Data Science' : 'Systems & Sockets'}
+              {project.projectType}
             </span>
-            <span className="text-[10px] font-mono text-zinc-500">
+            <span className="text-[9.5px] font-mono text-zinc-400 dark:text-zinc-550">
               {project.duration}
             </span>
           </div>
 
           {/* Project Title */}
-          <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-50 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+          <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-50 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors font-sans">
             {project.name}
           </h3>
 
-          {/* Core short description */}
-          <p className="text-sm leading-relaxed text-zinc-500 dark:text-zinc-400 line-clamp-2">
-            {project.tagline}
+          {/* Short description pitch */}
+          <p className="text-xs leading-relaxed text-zinc-600 dark:text-zinc-405 font-sans line-clamp-3">
+            {project.description}
           </p>
 
-          {/* Monospace stack badges */}
-          <div className="flex flex-wrap gap-1.5 pt-1.5 pb-2">
-            {project.tags.slice(0, 4).map((tag) => (
+          {/* Tech Stack section (4-6 technologies) */}
+          <div className="flex flex-wrap gap-1.5 pt-1">
+            {project.tags.slice(0, 6).map((tech) => (
               <span
-                key={tag}
-                className="px-2 py-1 text-[9px] font-mono bg-zinc-100 border border-zinc-200 text-zinc-650 dark:bg-zinc-900 dark:border-zinc-800 dark:text-zinc-400 rounded transition-colors"
-               >
-                {tag}
+                key={tech}
+                className="px-2.5 py-0.5 text-[10px] font-mono rounded-md bg-zinc-50 dark:bg-zinc-900/30 border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 select-none"
+              >
+                {tech}
               </span>
             ))}
-            {project.tags.length > 4 && (
-              <span className="px-1.5 py-0.5 text-[9px] font-mono text-zinc-400 font-semibold">
-                +{project.tags.length - 4} more
-              </span>
-            )}
           </div>
 
         </div>
 
-        {/* Action item buttons */}
-        <div className="mt-4 pt-4 border-t border-zinc-200/80 dark:border-zinc-800 flex items-center justify-between">
+        {/* Action Link Footer */}
+        <div className="pt-4 border-t border-zinc-100 dark:border-zinc-800/60 flex items-center justify-between">
+          
+          {/* External repositories and demos */}
           <div className="flex gap-4">
             <a
               href={project.github}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label={`GitHub page for ${project.name}`}
-              className="text-zinc-500 hover:text-zinc-950 dark:text-zinc-450 dark:hover:text-zinc-100 transition-colors"
+              title="View Repository"
+              className="text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-100 transition-colors"
             >
-              <Github className="h-4.5 w-4.5" />
+              <Github className="h-4 w-4" />
             </a>
             {project.live && (
               <a
                 href={project.live}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label={`Live Demo of ${project.name}`}
-                className="text-zinc-400 hover:text-zinc-950 dark:text-zinc-450 dark:hover:text-zinc-100 transition-colors"
+                title="View Sandbox"
+                className="text-zinc-450 hover:text-zinc-950 dark:hover:text-zinc-100 transition-colors"
               >
-                <ExternalLink className="h-4.5 w-4.5" />
+                <ExternalLink className="h-4 w-4" />
               </a>
             )}
           </div>
 
+          {/* Case study trigger */}
           <button
             onClick={() => onSelect(project.slug)}
-            className="flex items-center gap-1 text-[10px] font-bold text-blue-500 group-hover:underline cursor-pointer"
+            className="flex items-center gap-1 text-[10.5px] font-bold text-blue-500 hover:text-blue-600 dark:hover:text-blue-400 group-hover:underline cursor-pointer font-mono"
           >
-            <span>View Details →</span>
+            <span>Explore Project</span>
+            <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
           </button>
         </div>
 
       </div>
-    </div>  );
+    </div>
+  );
 }

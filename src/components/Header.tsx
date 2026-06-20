@@ -6,7 +6,6 @@ interface HeaderProps {
   setIsDarkMode: (val: boolean) => void;
   selectedProjectSlug: string | null;
   onBackToHome: () => void;
-  onResumeClick: () => void;
 }
 
 export default function Header({
@@ -14,7 +13,6 @@ export default function Header({
   setIsDarkMode,
   selectedProjectSlug,
   onBackToHome,
-  onResumeClick
 }: HeaderProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -65,10 +63,10 @@ export default function Header({
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
                 id="header-brand"
-                className="flex items-center gap-2 font-mono text-sm font-bold tracking-tight text-zinc-900 dark:text-zinc-100"
+                className="flex items-center gap-2 font-sans text-sm font-bold tracking-tight text-zinc-900 dark:text-zinc-100"
               >
                 <Terminal className="h-4 w-4 text-blue-500" />
-                <span>khalid.mohamed( )</span>
+                <span>Khalid Mohamed</span>
               </a>
             )}
           </div>
@@ -102,14 +100,16 @@ export default function Header({
                 {isDarkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
               </button>
 
-              <button
-                onClick={onResumeClick}
+              <a
+                href="/resume.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
                 id="btn-header-resume"
                 className="flex items-center gap-1.5 rounded-md bg-zinc-900 px-3 py-1.5 text-xs font-medium text-zinc-50 shadow hover:bg-zinc-800 active:scale-95 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200 transition-all cursor-pointer"
               >
                 <Download className="h-3.5 w-3.5" />
                 <span>Resume</span>
-              </button>
+              </a>
             </div>
           </div>
 
@@ -124,14 +124,16 @@ export default function Header({
               {isDarkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </button>
 
-            <button
-              onClick={onResumeClick}
+            <a
+              href="/resume.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
               id="btn-header-resume-mobile"
-              aria-label="Download Resume"
-              className="rounded-md p-1.5 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-900 dark:hover:text-zinc-100 transition-colors"
+              aria-label="Resume"
+              className="rounded-md p-1.5 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-900 dark:hover:text-zinc-100 transition-colors flex items-center justify-center"
             >
               <Download className="h-4 w-4" />
-            </button>
+            </a>
 
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}

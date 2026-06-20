@@ -1,235 +1,762 @@
 import { Project, Experience, Education, SkillGroup } from './types';
 
 export const projects: Project[] = [
-  {
-    id: '1',
-    name: 'Microservices Social Platform',
-    slug: 'microservices-social-platform',
-    tagline: 'High-performance microservices architecture handling real-time social networking workloads.',
-    description: 'Designed and engineered a scalable decentralised social networking backend, leveraging Go gRPC services, Apache Kafka for event-driven distribution, and PostgreSQL with Redis caching to support concurrent client activities.',
-    image: 'social_network.png',
-    tags: ['Go (Golang)', 'gRPC', 'Apache Kafka', 'PostgreSQL', 'Redis', 'Docker', 'Protobuf'],
-    github: 'https://github.com/kh522004/microservices-social-backend',
-    live: 'https://social-engine.demo',
-    role: 'Core Backend Architect',
-    duration: 'Sep 2025 - Jan 2026',
-    category: 'backend',
-    summary: 'A robust, distributed event-driven social networking system built from the ground up to solve synchronous scaling limits, providing ultra-low latencies for user operations under heavy mock workloads.',
-    problem: 'Traditional monolithic social systems suffer from cascade failures and high web-server thread locking under concurrent write events, such as bulk notification distribution and real-time feed updates.',
-    solution: 'Deconstructed the platform into dedicated high-efficiency microservices (User, Post, Feed, Notification) utilizing gRPC for lightweight, strongly-typed internal communication. Integrated Apache Kafka as an asynchronous transaction broker to guarantee notification delivery without blocking client user-agent loops. Applied a Write-Back caching topology with Redis to serve user timelines in sub-35ms.',
-    features: [
-      'Event-Driven Feed Aggregation: Decoupled post-publishing from feed generation via Kafka partition-aware consumers.',
-      'gRPC Internal Fabric: Enabled strict protobuf schema compilation, slashing HTTP header overhead by 70%.',
-      'Optimised Fan-Out Workers: Designed efficient Go routine worker groups to deliver notifications globally.',
-      'Highly Available Database Layers: Designed PostgreSQL replica configurations with separate read-write connection pool limits.',
-      'Containerised Testing Suites: Docker-packaged services with pre-configured mock telemetry for localized end-to-end load testing.'
-    ],
-    architecture: {
-      title: 'Distributed Event-Driven Architecture',
-      description: 'The social backend is split into 4 containerized Go services that communicate with each other over gRPC and exchange events asynchronously through an Apache Kafka broker cluster.',
-      steps: [
-        'Client Application sends a REST request to the API Gateway.',
-        'API Gateway processes, validates, and routes the request into internal gRPC microservices.',
-        'Post Service writes the new content to the PostgreSQL master instance and publishes a "PostCreated" message to Kafka.',
-        'Feed Worker and Notification Worker processes consume the event loop concurrently.',
-        'Notification Worker updates the user notifications log, while Feed Worker updates relevant user caches in Redis, which is kept in-memory.'
-      ]
-    },
-    challenges: 'Designing transactional consistency across separate PostgreSQL and Redis instances. In Go, an uncompleted partition upload to Kafka could cause a database record to become public without triggering notification. I resolved this by enacting the Transactional Outbox pattern, storing events in Postgres and dispatching them with a dedicated background relay service to confirm atomic updates.',
-    learning: 'Discovered the sheer speed of compiled Go gRPC endpoints over REST, mastered event-driven orchestration dynamics, and learned how to configure partition keys in Apache Kafka for sequence-guaranteed message streams.'
-  },
-  {
-    id: '2',
-    name: 'ClipSphere Pro',
-    slug: 'clipsphere-pro',
-    tagline: 'Cloud-native, automated video processing and secure distribution hub with BullMQ workers and Stripe integration.',
-    description: 'Built a full-stack media platform featuring automated multi-format transcoding pipelines, chunked cloud uploads, secure payment checkouts, and a content distribution system.',
-    image: 'clipsphere.png',
-    tags: ['TypeScript', 'Node.js', 'React', 'Redis', 'BullMQ', 'FFmpeg', 'MinIO/S3', 'Stripe'],
-    github: 'https://github.com/kh522004/clipsphere-video-engine',
-    live: 'https://clipsphere.dev',
-    role: 'Lead Full-Stack Developer',
-    duration: 'May 2025 - Aug 2025',
-    category: 'fullstack',
-    summary: 'A completely autonomous video ingestion, analytics, and paywalled-access SaaS container that offloads heavy video encoding off the main server thread to a distributed background workforce.',
-    problem: 'Video ingestion suffers from direct payload timeout on standard HTTP servers, and dynamic processing tasks (like generating multiple resolutions) exhaust server CPU capacities, leading to unresponsive user interfaces.',
-    solution: 'Designed and implemented an AWS-compatible S3 uploading system utilizing secure client presigned chunk, skipping server bandwidth. Leveraged Node.js background processors managed by BullMQ and Redis on distinct host nodes. Integrated FFmpeg within sandboxed containers to generate customizable H.264 profiles. Integrated Stripe Webhooks to unlock premium downloads and analytical metrics securely.',
-    features: [
-      'Multi-Format Transcoding Pipeline: Automatic generation of 1080p, 720p, and 480p streams plus thumbnail posters using Fluent-FFmpeg.',
-      'Resilient Chunked Parallel Uploads: Secure pre-signed uploads straight to object storage with support for paused and resumed flows.',
-      'Distributed Job Workers: Redis-backed state machine (BullMQ) gracefully handles background process retries and progress trackers.',
-      'Subscription Monetization Model: Integrated Stripe Checkout APIs and strict Webhook listeners to instantly authorize premium content.',
-      'Interactive Media Dashboard: Clean analytics dashboard visually displaying video bandwidth, views, watch-times, and earnings.'
-    ],
-    architecture: {
-      title: 'Ingestion, Queuing, and Transcoding Pipeline',
-      description: 'Offloads video manipulation from clients straight to remote S3 buckets and processes files with horizontal-scalable workers.',
-      steps: [
-        'React UI commands API server for a secure storage signature.',
-        'Client browser uploads video directly to Cloud S3 bucket via presigned URL chunks.',
-        'Storage trigger publishes "UploadComplete_Event", prompting API server to enqueue a video transcode task into BullMQ.',
-        'A dedicated FFmpeg Worker pulls the job from BullMQ, downloads the source file, and processes 3 output definitions.',
-        'S3 bucket stores the segmented outputs, publishes progress markers to Redis, and emits SSE pushes to update the user in real-time.'
-      ]
-    },
-    challenges: 'File cleanups following interrupted or failed transcode operations. Abandoned source files on local storage or raw objects in the cloud quickly expanded billings. Solving this required writing a custom automated GC (Garbage Collector) routine that monitors failed events in BullMQ and leverages S3 lifecycle parameters to auto-destruct unreferenced temporary folders.',
-    learning: 'Mastered stream-based Node.js backends, S3 presigned-url constraints, Stripe subscription workflows, and gained critical hands-on knowledge of asynchronous background queues and micro-analytics tracking.'
-  },
-  {
-    id: '3',
-    name: 'Ephemeral Hybrid Messenger',
-    slug: 'ephemeral-hybrid-messenger',
-    tagline: 'Zero-trace, E2EE instant messenger utilizing WebSockets and instant Redis message TTL pruning.',
-    description: 'Created an isolated messaging interface that pairs React-Crypto secure keys with instantaneous WebSockets, Redis pub/sub messaging channels, and TTL-governed ephemeral records.',
-    image: 'messenger.png',
-    tags: ['TypeScript', 'Node.js', 'WebSockets', 'Redis pub/sub', 'E2EE Web-Crypto', 'Docker', 'Express'],
-    github: 'https://github.com/kh522004/ephemeral-hybrid-messenger',
-    live: 'https://secure-chat.demo',
-    role: 'Security & Lead Engineer',
-    duration: 'Mar 2025 - May 2025',
-    category: 'security',
-    summary: 'A secure, anonymous communication app designed for zero metadata retention. Private keys never leave the client browser, and all messages vanish from remote RAM within custom user-configurable seconds.',
-    problem: 'Regular instant messaging applications retain communication files long-term on vulnerable servers, making them persistent targets for data breaches and regulatory liabilities.',
-    solution: 'Designed and deployed an End-to-End Cryptographic (E2EE) communication channel. Handled client connections utilizing standard WebSockets. Developed the routing core with Node.js and synchronized multi-user chat boxes using a high-efficiency Redis Pub/Sub cluster. Enforced a hard expiration epoch in Redis, guaranteeing all records are instantly wiped from server RAM without writing physical logs to disks.',
-    features: [
-      'In-Browser Cryptographic Suite: Fully encrypted content utilizing RSA-OAEP and AES-GCM 256 keys via browser-native Web Crypto API.',
-      'Sub-Millisecond Message Broker: Real-time message distribution across multiple Express clusters via Redis Pub/Sub channels.',
-      'Configurable Message Lifespans: Custom TTL settings (e.g., 5 seconds, 5 mins, 1 hour) that are executed strictly via Redis cache sweeps.',
-      'Anonymous Key Exchange: Simple secure identity codes to swap session parameters without gathering emails or mobile phone numbers.',
-      'Active Client Synchronization: Instant user online/typing status triggers and connection status reconnect hooks.'
-    ],
-    architecture: {
-      title: 'Decoupled E2EE WebSocket Lifecycle',
-      description: 'WebSockets facilitate real-time relaying while Redis coordinates synchronization across detached server processes.',
-      steps: [
-        'User Alice generates an RSA/AES keypair inside her browser and shares her public hash with Bob.',
-        'Bob encrypts his chat packet locally using Alices public key and writes it out to the WebSocket.',
-        'WebSocket Server processes the secure envelope and broadcasts it instantly over the Redis Pub/Sub broker channel.',
-        'Target WebSocket Server retrieves the message, routes the envelope to Alice, and writes the encrypted payload to Redis Cache with a customized TTL.',
-        'Alice decrypts the package in-memory. Redis automatically purges the key immediately upon the expiratory timeout.'
-      ]
-    },
-    challenges: 'Handling client disconnects without losing ephemeral data logs. WebSockets are inherently stateful, meaning a brief mobile network drop breaks active memory buffers. I solved this by implementing a short-lived, encrypted, Redis-cached user stream where clients can safely pull missed ephemeral blocks inside their TTL window using local sequence indexes, bridging the disconnect elegantly.',
-    learning: 'Gained absolute appreciation for network security standards, WebSocket heartbeat mechanisms, and learned how to build resilient multi-process systems without any persistent storage state.'
-  },
-  {
-    id: '4',
-    name: 'Threat-Flow ML Classifier',
-    slug: 'threat-flow-ml-classifier',
-    tagline: 'Neural Network classifier auditing high-dimensional routing streams to flag cyber intrusions with 98.4% accuracy.',
-    description: 'Designed an intelligent machine learning system processing live transaction logs, executing feature reduction, and classifying attack vectors with neural networks.',
-    image: 'analytics.png',
-    tags: ['Python', 'Scikit-learn', 'TensorFlow', 'Pandas', 'NumPy', 'Network-Logs', 'Matplotlib'],
-    github: 'https://github.com/kh522004/network-threat-classifier',
-    live: 'https://ml-intrusion-dashboard.demo',
-    role: 'Machine Learning / Data Eng.',
-    duration: 'Dec 2024 - Feb 2025',
-    category: 'ml',
-    summary: 'A comprehensive cyber intrusion auditing system built to process millions of network activity packets and accurately map attack vectors like DDoS, Port Scans, and Brute Force incursions.',
-    problem: 'Network operators are flooded with logs. Sifting out true malicious attack footprints is a needle-in-a-haystack problem with severe consequences, especially given massive log class imbalances (99.9% normal traffic).',
-    solution: 'Designed and trained an advanced Deep Neural Network (DNN) and complementary Random Forest ensemble models. Preprocessed big dataset pipelines using Pandas and NumPy. Remedied extreme threat sample sparsity using SMOTE (Synthetic Minority Over-sampling Technique). Reduced over 40 feature metrics down to 12 vital dimensions via Principal Component Analysis (PCA) to drive high inference speeds on edge router processors.',
-    features: [
-      'Multi-Class Intrusion Classifier: High-accuracy categorization of 8 different cyber security attack patterns.',
-      'Extreme Imbalance Handling: Driven detection rate of sparse indicators via advanced over-sampling and Focal-Loss training metrics.',
-      'Feature Engineering Pipeline: Custom python processors mapping raw IP, ports, and payload sizes into high-signal feature matrices.',
-      'Interactive Prediction Panel: Built a diagnostic Tkinter / Web-stub wrapper allowing operators to upload live flows and view threat reports.',
-      'Detailed Performance Visuals: Full analysis detailing Confusion Matrices, ROC curves, and precision-recall trade-offs.'
-    ],
-    challenges: 'Preventing classifier overfitting on local lab logs that would result in poor detection rates on open, real-world networks. I resolved this by applying Strict L2 Regularization constraints, introducing Dropout layers, and training using the standardized, high-variance CICIDS2017 intrusion dataset containing real modern network behaviors.',
-    learning: 'Mastered mathematical feature scaling, deep learning parameter tuning inside TensorFlow, and developed a strong appreciation for the practical constraints of deploying ML models onto raw infrastructure components.'
-  },
-  {
-    id: '5',
-    name: 'ZC League Hub',
-    slug: 'zc-league-hub',
-    tagline: 'Multi-tenant athletic scheduler and tournament organizer built custom for the Zewail City student community.',
-    description: 'Coordinated and currently maintain the city sports community organizer, supporting deterministic bracket generators, live score updates, and a dynamic student leader board.',
-    image: 'zcleague.png',
-    tags: ['React', 'Node.js', 'PostgreSQL', 'Tailwind CSS', 'Socket.io', 'Vite', 'Express'],
-    github: 'https://github.com/kh522004/zc-league-hub',
-    live: 'https://zcleague.com',
-    role: 'Lead Architect & Core Maintainer',
-    duration: 'Jan 2024 - Present',
-    category: 'systems',
-    summary: 'A community-driven digital matches dashboard deployed live to manage, schedule, and broadcast scores for all inter-departmental athletic matches at Zewail City.',
-    problem: 'Student sport activities relied heavily on complex, manually updated spreadsheets that resulted in scheduling friction, coordinate losses, and lack of player-facing real-time progress monitors.',
-    solution: 'Developed a responsive full-stack platform built utilizing PostgreSQL with a custom React front-end. Programmed standard deterministic brackets (Single Elimination, Double Elimination, and Round Robin) that auto-update as match outputs are recorded. Established real-time sockets through Socket.io, allowing on-field referees to instantly broadcast live goals and card penalties directly to students.',
-    features: [
-      'Interactive Bracket Visualiser: Fully responsive bracket tree displaying team movements, current runs, and historical scores.',
-      'Live Score Broadcaster: Instant push server syncs referees on-field reports to thousands of connected student dashboards.',
-      'Academic Multi-Tenancy: Clean organization of departments (Engineering, Science, etc.) with dedicated leaderboards.',
-      'Deterministic Scheduler: Algorithmic match-maker scheduling games to prevent team burnout and field conflicts.',
-      'Role-Based Authorization: Strong JWT logins and RBAC separating Referees, League Admins, and Student viewers.'
-    ],
-    challenges: 'Handling real-time synchronization during peak tournament hours, where concurrent player viewing crashed database connections. I resolved this by writing an Express-side caching middleware layer, bypassing repetitive DB queries for index screens, and wrapping write processes inside strict PostgreSQL isolation levels to avoid double-update conflicts.',
-    learning: 'Gained priceless practical skills on deploying, hosting, and maintaining a live software product with real users, dealing with instant user feedback, and tweaking server logic to optimize performance on tight server budgets.'
-  }
+{
+  id: "1",
+
+  name: "ClipSphere",
+
+  slug: "clipsphere",
+
+  tagline:
+    "A video sharing platform where files upload and process in the background so the website stays fast and responsive.",
+
+  description:
+    "I built ClipSphere because I wanted to understand how video sites like YouTube handle huge file uploads without freezing the user interface. When a user uploads a video, processing it (like converting formats or generating thumbnails) takes too much time to handle inside a standard HTTP request.\n\nTo solve this, I built a frontend in React and a backend using Node.js and Express. Instead of making the user wait, the API receives the upload, schedules the heavy processing work in the background, and immediately lets the user know the video is processing.\n\nThis project was a great way to learn how to separate a fast user-facing API from slow background tasks using a job queue.",
+
+  image: "clipsphere.png",
+
+  category: "fullstack",
+
+  projectType: "Full-Stack Video Sharing Platform",
+
+  duration: "2026",
+
+  role: "Full-Stack Developer",
+
+  github: "YOUR_GITHUB_LINK",
+
+  live: "",
+
+  tags: [
+    "React",
+    "Node.js",
+    "Express",
+    "MongoDB",
+    "Redis",
+    "Docker",
+    "JWT",
+    "Cloudinary"
+  ],
+
+  cardHighlights: [
+    "Secure authentication using JWT.",
+    "Background processing for media-related tasks.",
+    "Containerized development using Docker."
+  ],
+
+  cardChallenge:
+    "Handling large video uploads while keeping the application responsive.",
+
+  summary:
+    "A video platform project built to learn how to handle large file uploads and slow background tasks without blocking the main website.",
+
+  problem:
+    "I've always been curious about how sites like YouTube process videos. When I tried building a basic video upload feature in a simple backend, it was a disaster. Any video larger than a few megabytes would freeze the server, causing it to time out and lock out anyone else trying to use the app. I realized I couldn't just process uploads in the main request loop; I needed a setup where the server accepts the file quickly, lets the user know it's being worked on, and processes it in the background.",
+
+  solution:
+    "I built a Node.js and Express API coupled with a React frontend that offloads video processing to a background worker queue. When a user drops a video in the UI, the frontend sends it directly to the Express server, which writes the file metadata to MongoDB, uploads the raw video file to Cloudinary, and drops a processing job into Redis.\n\nA separate background worker running BullMQ picks up the job, handles the slow conversion and thumbnail generation, and updates the database once it's done. This ensures the main web server never blocks.",
+
+  features: [
+    "Log in securely to see your own video dashboard",
+    "Drag and drop video files to start an upload",
+    "Track processing progress with a live status loader",
+    "Browse, watch, and play uploaded videos on your home feed",
+    "Download processed videos in different formats"
+  ],
+
+  challenges:
+    "The biggest headache was handling huge file uploads without crashing the Node.js server process. Originally, Express would try to buffer the entire file in RAM before saving it, which caused the server to run out of memory and crash on 200MB videos. I had to rewrite the upload handler using multer to stream the files directly to a temporary local disk directory instead of keeping them in memory, before sending them to Cloudinary. It was a tedious process of debugging stream errors and clean-up functions, but it taught me a lot about memory management in Node.",
+
+  learning:
+    "This project completely changed how I think about server resources. I originally thought a single server could do everything if it was fast enough. Now, I realize that any task taking more than a few hundred milliseconds must be handled asynchronously. If I rebuilt this today, I would use direct client-to-cloud uploads (presigned URLs) so that files go straight from the browser to Cloudinary, bypassing my Express server entirely to save bandwidth and CPU cycles.",
+
+  teamSize: "Solo Project",
+
+  status: "Completed"
+}
+,
+{
+  id: "2",
+
+  name: "Hybrid Ephemeral Messenger",
+
+  slug: "hybrid-ephemeral-messenger",
+
+  tagline:
+    "A real-time messaging app where chat rooms and messages automatically self-destruct after a set timer.",
+
+  description:
+    "I built this chat app to explore real-time communication and how to handle data that shouldn't live forever. I wanted to create a simple, privacy-focused messaging platform where rooms and messages disappear automatically after a set period.\n\nThe app uses React for the UI, Node.js and Express for the API, and Socket.IO to keep the chats in sync. The real magic happens in Redis, where I set up automatic expiration times for messages so they disappear from the cache and database without manual cleanup.\n\nIt was a great project for learning how web sockets keep users connected and how to work with memory-efficient key-value stores.",
+
+  image: "messenger.png",
+
+  category: "backend",
+
+  projectType: "Real-Time Messaging Platform",
+
+  duration: "2026",
+
+  role: "Backend & Full-Stack Developer",
+
+  github: "YOUR_GITHUB_LINK",
+
+  live: "",
+
+  tags: [
+    "React",
+    "Node.js",
+    "Express",
+    "Socket.IO",
+    "Redis",
+    "MongoDB",
+    "Docker",
+    "Firebase Authentication"
+  ],
+
+  cardHighlights: [
+    "Real-time communication using Socket.IO.",
+    "Automatic message expiration using Redis TTL.",
+    "Dockerized multi-service architecture."
+  ],
+
+  cardChallenge:
+    "Building a messaging system that feels instant while ensuring expired messages are automatically removed.",
+
+  summary:
+    "A chat application that uses WebSockets for real-time messaging and Redis to automatically delete messages after their expiration time.",
+
+  problem:
+    "I wanted to build a real-time messaging app, but I was uncomfortable with how most messaging platforms store every single text message forever. I wanted a private space where I could chat with friends, knowing that my rooms and conversations would completely self-destruct after a short timer, without leaving leftovers in database backups.",
+
+  solution:
+    "I used Redis to cache active chats and set a TTL (Time-To-Live) on each message key. When the TTL expires, Redis automatically deletes the key. I also integrated Firebase Authentication to make signup secure, and Socket.IO to push messages to active users instantly. If a user joins later, the app fetches whatever unexpired messages are left in the database.",
+
+  features: [
+    "Create a temporary chat room with a custom destruction timer",
+    "Send instant messages that disappear for everyone once the timer runs out",
+    "See typing indicators when a friend is drafting a message",
+    "Check who is currently online in the chat room",
+    "Log in securely using a Google account via Firebase"
+  ],
+
+  challenges:
+    "I ran into a tough sync issue when messages expired in Redis. While Redis deleted the keys, the users' browser screens didn't update automatically, meaning expired messages stayed visible until the page refreshed. To fix this, I had to configure Redis keyspace notifications in my Docker database configuration. This let my Node.js server listen for Redis expired events and immediately emit a Socket.IO message to delete the text from the screens of all connected clients in real time.",
+
+  learning:
+    "I realized that memory is a precious resource and databases don't always need to write to disk. Prior to this, I used MongoDB for everything. Working with Redis taught me how to structure data entirely in memory. If I rebuilt this today, I would implement End-to-End Encryption (E2EE) using the Web Crypto API so that even the Node.js server cannot read the messages while they are transit or sitting in Redis.",
+
+  teamSize: "Solo Project",
+
+  status: "Completed"
+}
+,
+{
+  id: "3",
+
+  name: "INKIX",
+
+  slug: "inkix",
+
+  tagline:
+    "A custom shoe design platform that lets users personalize sneakers through an interactive web interface before placing an order.",
+
+  description:
+    "INKIX is a web application that allows users to customize shoes by selecting colors, materials, and design elements through an intuitive interface. The project focused on creating a smooth user experience while combining modern frontend development with backend functionality.\n\nThis project was built to explore how customization platforms work while improving my frontend and full-stack development skills. The main goal was to create a responsive application that makes designing personalized shoes simple and enjoyable.",
+
+  image: "inkix.png",
+
+  category: "fullstack",
+
+  projectType: "Full-Stack Web Application • UI/UX Design",
+
+  duration: "2026",
+
+  role: "Full-Stack Developer",
+
+  github: "YOUR_GITHUB_LINK",
+
+  live: "",
+
+  tags: [
+    "React",
+    "TypeScript",
+    "Tailwind CSS",
+    "Node.js",
+    "Express",
+    "MongoDB"
+  ],
+
+  cardHighlights: [
+    "Interactive shoe customization.",
+    "Live visual updates.",
+    "Order placement workflow."
+  ],
+
+  cardChallenge:
+    "Managing state as users continuously modified their design.",
+
+  summary:
+    "Build an interactive shoe customization platform where users can personalize products through a clean interface while learning full-stack development and UI/UX principles.",
+
+  problem:
+    "Many online customization tools feel cluttered or difficult to use. I wanted to design a cleaner experience where users could experiment with different shoe designs without feeling overwhelmed.",
+
+  solution:
+    "I designed and developed a responsive web application that provides an interactive customization workflow. Users can modify different parts of a shoe, preview their design, and manage their selections through a clean interface.",
+
+  features: [
+    "Interactive shoe customization",
+    "Live visual updates",
+    "Responsive user interface",
+    "User authentication",
+    "Product management",
+    "Order workflow"
+  ],
+
+  challenges:
+    "Keeping the customization interface intuitive while supporting multiple design options was tough. I also had to manage application state as users continuously modified their design, and make sure the layout worked well on both desktop and mobile screens.",
+
+  learning:
+    "This project strengthened my understanding of UI/UX design principles and showed me how important state management becomes in interactive applications. It also helped me improve communication between the frontend and backend while building a complete user-facing product.",
+
+  teamSize: "Solo Project",
+
+  status: "Completed"
+}
+,
+{
+  id: "4",
+
+  name: "ZC League",
+
+  slug: "zc-league",
+
+  tagline:
+    "A sports league manager that helps organizers schedule university matches and update live scores.",
+
+  description:
+    "Our university tournaments were always organized using static Excel sheets and chaotic WhatsApp group chats, which made it hard to keep track of schedules and live scores. I decided to build ZC League to centralize everything in one place.\n\nI built a web platform where tournament administrators can create leagues, input teams, and generate match schedules automatically. Referees have special access to update match scores live, and players can log in to view the latest standings, upcoming matches, and stats.\n\nThis project helped me learn database design and how to manage different user permissions in a real web application.",
+
+  image: "zcleague.png",
+
+  category: "fullstack",
+
+  projectType: "Sports League Management System",
+
+  duration: "2026",
+
+  role: "Lead Full-Stack Developer",
+
+  github: "YOUR_GITHUB_LINK",
+
+  live: "",
+
+  tags: [
+    "React",
+    "Node.js",
+    "Express",
+    "PostgreSQL",
+    "Socket.IO",
+    "Docker",
+    "JWT",
+    "Tailwind CSS"
+  ],
+
+  cardHighlights: [
+    "Tournament scheduling and fixture management.",
+    "Real-time score updates using Socket.IO.",
+    "Role-based access for administrators, referees, and players."
+  ],
+
+  cardChallenge:
+    "Keeping match information synchronized across connected users while maintaining a clean and scalable backend architecture.",
+
+  summary:
+    "A tournament web app replacing manual spreadsheets with automated scheduling, standing tables, and live score updates.",
+
+  problem:
+    "Our university sports league was organized entirely via messy spreadsheets and WhatsApp group chats. It was a nightmare. Organizers would accidentally schedule two games on the same field at the same time, referees didn't know which games they were assigned to, and players had to wait hours for standings to be updated manually. I wanted to build a web app to automate all of this.",
+
+  solution:
+    "I developed ZC League, a full-stack tournament manager. I wrote a scheduling script that automatically generates round-robin fixtures ensuring no team or referee is double-booked. I built a PostgreSQL database with strict foreign key constraints to model leagues, teams, matches, and players, and created a dashboard where referees can update game scores live, immediately updating standings tables across the app via Socket.IO.",
+
+  features: [
+    "Generate complete, conflict-free match schedules with one click",
+    "Track live scores and goal scorers as they happen",
+    "View automatically updated league standings and goal statistics",
+    "Log in as a referee to enter match events directly from the sideline",
+    "Browse teams, player profiles, and match histories"
+  ],
+
+  challenges:
+    "The hardest part was maintaining data consistency during live score updates. If a referee recorded a goal, the database had to update the match score, increment the player's goal count, recalculate both teams' points and goal differences, and update the league table. If any of those queries failed, the tables would mismatch. I had to learn how to write SQL database transactions in PostgreSQL using knex/pg to group these queries. If one step failed, the entire transaction rolled back, preventing corrupted tournament standings.",
+
+  learning:
+    "I originally thought NoSQL databases were always better because they are easy to start with, but this project made me realize the massive value of SQL constraints. Setting up relational integrity saved me from writing hundreds of lines of validation checks in Javascript. If I rebuilt this today, I would add a double-blind score reporting system where both team captains must agree on the final score before the standings update, reducing the admin workload even further.",
+
+  teamSize: "Solo Project",
+
+  status: "Completed"
+}
+,
+{
+  id: "5",
+
+  name: "Social Media Platform",
+
+  slug: "social-network",
+
+  tagline:
+    "A social media website featuring user profiles, posts, friendships, and live notifications.",
+
+  description:
+    "I wanted to build a social media site to learn how to handle complex relationships between users, like friends, likes, and comments. The backend is built with Express and MongoDB, while the frontend is a React application.\n\nThe app supports user signup, creating posts with text and images, commenting, liking, sending friend requests, and getting real-time notifications when someone interacts with your profile.\n\nIt was a challenging project because of how many features are connected. It taught me how to keep my code organized and modular.",
+
+  image: "social-network.png",
+
+  category: "fullstack",
+
+  projectType: "Social Media Platform",
+
+  duration: "2026",
+
+  role: "Backend & Full-Stack Developer",
+
+  github: "YOUR_GITHUB_LINK",
+
+  live: "",
+
+  tags: [
+    "React",
+    "Node.js",
+    "Express",
+    "MongoDB",
+    "Socket.IO",
+    "JWT",
+    "Docker",
+    "Tailwind CSS"
+  ],
+
+  cardHighlights: [
+    "Secure authentication using JWT.",
+    "Real-time notifications and messaging.",
+    "RESTful API with modular backend architecture."
+  ],
+
+  cardChallenge:
+    "Designing a backend capable of managing multiple social features while keeping the codebase modular and maintainable.",
+
+  summary:
+    "A full-stack social network built to learn database relationships, user-to-user interactions, and real-time feeds.",
+
+  problem:
+    "I wanted to understand how social media backends work behind the scenes. Specifically, I wanted to learn how to model complex relationships—like following a user, commenting on a thread, and displaying dynamic feeds—without making my API slow down as the database grew.",
+
+  solution:
+    "I built a social media backend using Node.js, Express, and MongoDB, complete with a React frontend. The platform supports user profiles, posts with image uploads, likes, nested comments, and a friend request system. To make the app feel alive, I added Socket.IO to push instant notifications whenever someone likes your post or sends you a friend request.",
+
+  features: [
+    "Personalize your profile page with a bio and avatar",
+    "Share posts with text and image uploads",
+    "Like and comment on posts to interact with friends",
+    "Send, accept, or decline friend requests",
+    "Get instant visual notifications when someone interacts with your posts"
+  ],
+
+  challenges:
+    "I ran into major performance issues when fetching the home feed. Originally, my feed query did multiple separate database queries: getting the user's friends, finding their posts, and lookup info for likes. It was incredibly slow. I had to learn MongoDB aggregation pipelines, using $lookup and $project to fetch all posts, join user details, check if the current user liked each post, and paginate the results in a single database roundtrip. This cut my API response times from 800ms to under 50ms.",
+
+  learning:
+    "The biggest mistake I made was not paginating the API responses from day one. I originally fetched all comments for a post at once, which worked fine with 5 comments but crashed the UI when I tested it with 100 comments. Now, I paginate every list query by default. If I rebuilt this today, I would use PostgreSQL instead of MongoDB. Modeling friendships and friend-of-friend relations is much cleaner and faster with relational tables and joins than NoSQL arrays.",
+
+  teamSize: "Solo Project",
+
+  status: "Completed"
+}
+,
+{
+  id: "6",
+
+  name: "BingeBox",
+
+  slug: "bingebox",
+
+  tagline:
+    "Movie & TV Streaming Platform",
+
+  description:
+    "BingeBox is a full-stack streaming platform inspired by modern entertainment services. The goal was to design a polished user experience while building a scalable application structure with reusable components, API integration, authentication, and responsive layouts.\n\nThis project was built to recreate the experience of a modern streaming platform while improving my frontend architecture and full-stack development skills. The application allows users to browse movies and TV shows, search content, view detailed information, and manage a personalized watchlist through a clean and responsive interface.",
+
+  image: "bingebox.png",
+
+  category: "fullstack",
+
+  projectType: "Full-Stack Web Application",
+
+  duration: "2025",
+
+  role: "Full-Stack Developer",
+
+  github: "YOUR_GITHUB_LINK",
+
+  live: "",
+
+  tags: [
+    "React",
+    "TypeScript",
+    "Tailwind CSS",
+    "Node.js",
+    "Express",
+    "MongoDB",
+    "Docker"
+  ],
+
+  cardHighlights: [
+    "Browse movies and TV shows.",
+    "Detailed movie pages and search.",
+    "Personal watchlist management."
+  ],
+
+  cardChallenge:
+    "Organizing the frontend into reusable components while keeping state management simple.",
+
+  summary:
+    "I built BingeBox to recreate the experience of a modern streaming platform while improving my frontend architecture and full-stack development skills. The application allows users to browse movies and TV shows, search content, view detailed information, and manage a personalized watchlist through a clean and responsive interface.",
+
+  problem:
+    "I wanted to understand how streaming platforms organize large collections of content while maintaining a smooth and intuitive user experience. This project allowed me to practice designing a frontend that remains fast and organized as the application grows.",
+
+  solution:
+    "I designed and built a responsive web application where users can browse movies, search content, view detailed information, and manage their watchlist. The application communicates with a backend API while keeping the interface modular and easy to maintain.",
+
+  features: [
+    "Browse movies and TV shows",
+    "Search functionality",
+    "Detailed movie pages",
+    "User authentication",
+    "Personal watchlist",
+    "Responsive design"
+  ],
+
+  challenges:
+    "One of the biggest challenges was organizing the frontend into reusable components while keeping state management simple. Another challenge was designing an interface that remained responsive and easy to navigate across different screen sizes.",
+
+  learning:
+    "This project strengthened my understanding of frontend architecture, reusable component design, routing, API integration, and building responsive user interfaces. It also reinforced the importance of organizing code as applications become larger.",
+
+  teamSize: "Solo Project",
+
+  status: "Completed"
+}
 ];
+
+// ======================================================
+// PROFILE
+// ======================================================
+
+export const profile = {
+  name: "Khalid Mohamed",
+
+  title: "Software Engineer",
+
+  subtitle:
+    "Computer Science & AI student passionate about backend engineering, scalable APIs, distributed systems, and modern full-stack applications.",
+
+  location: "Giza, Egypt",
+
+  email: "kh.mohamed.dev@gmail.com",
+
+  github: "https://github.com/khalidua",
+
+  linkedin: "https://linkedin.com/in/khalidmodev",
+
+  resume: "/resume.pdf",
+
+  availability: "Open to Software Engineering Internships",
+
+  heroButtons: [
+    {
+      label: "View Projects",
+      href: "#projects",
+      primary: true,
+    },
+    {
+      label: "Download Resume",
+      href: "/resume.pdf",
+      primary: false,
+    },
+  ],
+};
+
+// ======================================================
+// ABOUT
+// ======================================================
+
+export const about = {
+  title: "About",
+
+  description: `
+I'm a Computer Science & Artificial Intelligence student at Zewail City who enjoys turning ideas into reliable software.
+
+My primary focus is backend engineering, but I enjoy working across the full stack—from designing databases and REST APIs to building responsive React applications and deploying them using modern development workflows.
+
+Through personal and academic projects, I've built authentication systems, real-time apps, distributed projects, and interactive full-stack websites.
+
+I'm constantly learning, building, and refining my engineering skills with the goal of becoming a world-class software engineer.
+`,
+
+  highlights: [
+    "Backend Engineering",
+    "Full-Stack Development",
+    "REST API Design",
+    "Authentication & RBAC",
+    "Distributed Systems",
+    "Real-Time Applications",
+    "Docker & DevOps",
+    "System Design",
+  ],
+};
+
+// ======================================================
+// QUICK STATS
+// ======================================================
+
+export const stats = [
+  {
+    label: "Featured Projects",
+    value: "8",
+  },
+  {
+    label: "GPA",
+    value: "3.89",
+  },
+  {
+    label: "Languages",
+    value: "7+",
+  },
+  {
+    label: "Technologies",
+    value: "30+",
+  },
+];
+
+// ======================================================
+// CURRENT FOCUS
+// ======================================================
+
+export const currentlyLearning = [
+  "Distributed Systems",
+  "Software Architecture",
+  "Microservices",
+  "Cloud & DevOps",
+  "Backend Performance",
+  "Scalable System Design",
+];
+
+// ======================================================
+// CONTACT
+// ======================================================
+
+export const contact = {
+  email: "kh.mohamed.dev@gmail.com",
+
+  location: "Giza, Egypt",
+
+  github: "https://github.com/khalidua",
+
+  linkedin: "https://linkedin.com/in/khalidmodev",
+
+  message:
+    "Whether you have an internship opportunity, an interesting project, or simply want to connect, I'd be happy to hear from you.",
+};
+
+// ======================================================
+// EXPERIENCE
+// ======================================================
 
 export const experiences: Experience[] = [
   {
-    id: 'exp1',
-    role: 'Full Stack Software Engineer & Tech Lead',
-    company: 'ZC Academic Coding Guild / Freelance',
-    location: 'Zewail City, Egypt',
-    duration: 'Jan 2024 - Present',
-    description: [
-      'Architected and deployed "ZC League Hub", a scalable league organizer currently managing tournaments for 150+ student athletes, achieving a 100% reduction in manual coordination overhead.',
-      'Mentored 40+ sophomore students on advanced software design principles, microservices architectures, database pool optimization, and Docker orchestration workflows.',
-      'Built custom client-facing applications for local tech projects with secure Stripe checkouts and custom analytical logs.'
-    ],
-    tags: ['React', 'Node.js', 'PostgreSQL', 'WebSockets', 'Docker', 'JWT/RBAC']
-  },
-  {
-    id: 'exp2',
-    role: 'Undergraduate Systems Researcher',
-    company: 'Zewail City of Science and Technology',
-    location: 'Zewail City, Egypt',
-    duration: 'Sep 2023 - Dec 2024',
-    description: [
-      'Collaborated with computer engineering faculty on research focusing on low-latency microservice communication models, benchmarking gRPC and Protobuf structures against traditional REST endpoints.',
-      'Refactored academic cluster configurations to use specialized Docker environments, speeding up student simulation replication times by 85%.',
-      'Coded high-performance system parsers in C++ and Python to analyze memory and processing bottlenecks under simulated multi-threaded concurrent loads.'
-    ],
-    tags: ['Go', 'gRPC', 'C++', 'Python', 'Docker', 'Benchmarking']
-  }
-];
+    id: "ta",
 
-export const educationList: Education[] = [
+    role: "Junior Teaching Assistant",
+
+    company: "Zewail City of Science and Technology",
+
+    location: "Giza, Egypt",
+
+    duration: "Sep 2025 – Present",
+
+    description: [
+      "Assist undergraduate students in Data Structures, Algorithms, and Object-Oriented Programming labs.",
+      "Guide students through debugging sessions and help them improve problem-solving and coding practices.",
+      "Support instructors in preparing lab materials, assignments, and programming exercises.",
+      "Mentor students during office hours by explaining software engineering concepts and best coding practices."
+    ],
+
+    tags: [
+      "C++",
+      "Algorithms",
+      "Data Structures",
+      "OOP",
+      "Teaching",
+      "Mentoring"
+    ]
+  },
+
   {
-    degree: 'Bachelor of Science in Computer Science',
-    institution: 'Zewail City of Science, Technology and Innovation',
-    location: 'Giza, Egypt',
-    gpa: '3.88 / 4.00 (High Honors)',
-    duration: 'Sep 2022 - Jun 2026 (Expected)',
-    details: [
-      "Specialising in Distributed Systems, High-Performance Backends, and Microservices.",
-      "Recipient of Academic Excellence Scholarships (Full Tuition, 4 consecutive years).",
-      "Dean's List Award (All consecutive semesters), Elected Academic Computer Science Tutor.",
-      "Key coursework: Distributed Systems, Advanced Databases, Network Security, Operating Systems, Machine Learning."
+    id: "projects",
+
+    role: "Personal Software Engineering Projects",
+
+    company: "Independent",
+
+    location: "Remote",
+
+    duration: "2024 – Present",
+
+    description: [
+      "Designed and developed multiple full-stack web applications using React, Node.js, Express, FastAPI, and PostgreSQL.",
+      "Built secure authentication systems using JWT, OAuth, Firebase Authentication, and role-based access control.",
+      "Developed real-time applications using Socket.IO and Redis for live communication and synchronization.",
+      "Containerized applications with Docker and deployed projects using modern development workflows."
+    ],
+
+    tags: [
+      "React",
+      "Node.js",
+      "FastAPI",
+      "Docker",
+      "Redis",
+      "PostgreSQL"
     ]
   }
 ];
 
-export const skillGroups: SkillGroup[] = [
+// ======================================================
+// EDUCATION
+// ======================================================
+
+export const educationList: Education[] = [
   {
-    category: 'Languages & Core syntax',
-    items: ['Go (Golang)', 'Python', 'TypeScript', 'JavaScript (ES6+)', 'C++', 'SQL', 'Bash / Shell']
-  },
-  {
-    category: 'Backend & Systems Architecture',
-    items: ['Node.js (Express)', 'gRPC', 'Apache Kafka', 'Redis Caching', 'BullMQ Queueing', 'FastAPI', 'REST APIs', 'WebSockets']
-  },
-  {
-    category: 'Frontend & UI Craft',
-    items: ['React.js', 'Tailwind CSS', 'Vite', 'Next.js', 'HTML5 / Modern JSX', 'Motion animations', 'Recharts']
-  },
-  {
-    category: 'Storage & Persistent Databases',
-    items: ['PostgreSQL', 'Docker Containers', 'MinIO / AWS S3', 'MongoDB', 'Drizzle ORM', 'SQL transaction models']
-  },
-  {
-    category: 'AI & Data Science Tooling',
-    items: ['TensorFlow', 'Scikit-learn', 'Pandas', 'NumPy', 'Math Feature Scaling', 'Principal Component Analysis (PCA)']
+    degree: "Bachelor of Science in Computer Science & Artificial Intelligence",
+
+    institution: "Zewail City of Science and Technology",
+
+    location: "Giza, Egypt",
+
+    gpa: "3.89 / 4.00",
+
+    duration: "2023 – Expected 2027",
+
+    details: [
+      "Relevant Coursework: Data Structures & Algorithms, Software Engineering, Operating Systems, Database Systems, Computer Networks, Web Development.",
+      "Actively building backend and full-stack applications through academic and personal projects.",
+      "Passionate about backend engineering, software architecture, distributed systems, and modern web technologies.",
+      "Continuously expanding knowledge through hands-on projects, technical courses, and software engineering internships."
+    ]
   }
 ];
+
+// ======================================================
+// SKILLS
+// ======================================================
+
+export const skillGroups: SkillGroup[] = [
+  {
+    category: "Languages",
+    items: [
+      "Python",
+      "JavaScript",
+      "TypeScript",
+      "C++",
+      "C#",
+      "SQL",
+      "HTML",
+      "CSS"
+    ]
+  },
+  {
+    category: "Frontend",
+    items: [
+      "React",
+      "Next.js",
+      "Vite",
+      "Tailwind CSS",
+      "Bootstrap",
+      "Responsive Design"
+    ]
+  },
+  {
+    category: "Backend",
+    items: [
+      "Node.js",
+      "Express.js",
+      "FastAPI",
+      "ASP.NET",
+      "REST APIs",
+      "Socket.IO",
+      "API Design"
+    ]
+  },
+  {
+    category: "Databases",
+    items: [
+      "PostgreSQL",
+      "MongoDB",
+      "Redis",
+      "SQL Server",
+      "Entity Framework",
+      "SQLAlchemy"
+    ]
+  },
+  {
+    category: "DevOps",
+    items: [
+      "Docker",
+      "Docker Compose",
+      "GitHub Actions",
+      "CI/CD",
+      "Linux"
+    ]
+  },
+  {
+    category: "Cloud",
+    items: [
+      "Azure",
+      "Cloudinary",
+      "Firebase"
+    ]
+  },
+  {
+    category: "Testing",
+    items: [
+      "Postman",
+      "API Testing",
+      "Unit Testing",
+      "Integration Testing",
+      "Debugging"
+    ]
+  },
+  {
+    category: "Software Engineering",
+    items: [
+      "Object-Oriented Programming",
+      "SOLID Principles",
+      "Design Patterns",
+      "Agile",
+      "Scrum"
+    ]
+  },
+  {
+    category: "Tools",
+    items: [
+      "Git",
+      "GitHub",
+      "VS Code",
+      "Visual Studio",
+      "Figma"
+    ]
+  }
+];
+

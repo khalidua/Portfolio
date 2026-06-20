@@ -14,15 +14,15 @@ export interface Project {
   problem: string;
   solution: string;
   features: string[];
-  architecture?: {
-    title: string;
-    description: string;
-    diagram?: string[]; // Simplified visual items
-    steps: string[];
-  };
   challenges: string;
   learning: string;
   category: 'backend' | 'fullstack' | 'security' | 'ml' | 'systems';
+  // New technical metadata fields for high-signal case study
+  projectType: string;
+  cardHighlights: string[];
+  cardChallenge: string;
+  teamSize: string;
+  status: string;
 }
 
 export interface Experience {

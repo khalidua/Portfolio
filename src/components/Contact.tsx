@@ -1,214 +1,176 @@
-import { useState, FormEvent } from 'react';
-import { Mail, Github, Linkedin, Send, CheckCircle2, MessageSquareText, Terminal } from 'lucide-react';
+import { Mail, Github, Linkedin, Send, FileText, MapPin } from 'lucide-react';
 
 export default function Contact() {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [subject, setSubject] = useState('');
-  const [message, setMessage] = useState('');
-  
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitSuccess, setSubmitSuccess] = useState(false);
-
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    if (!name || !email || !message) return;
-
-    setIsSubmitting(true);
-    
-    // Simulate real database or API endpoint sending
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setSubmitSuccess(true);
-      
-      // Reset form variables
-      setName('');
-      setEmail('');
-      setSubject('');
-      setMessage('');
-
-      // Auto-expire success alert after 5 seconds
-      setTimeout(() => setSubmitSuccess(false), 5000);
-    }, 1200);
-  };
-
   const contactOptions = [
     {
-      name: 'Primary EmailAddress',
-      value: 'kh522004@gmail.com',
-      href: 'mailto:kh522504@gmail.com?subject=Recruitment%20Inquiry',
-      icon: <Mail className="h-4.5 w-4.5 text-blue-500" />
+      name: 'Email',
+      description: 'Best way to reach me',
+      value: 'kh.mohamed.dev@gmail.com',
+      href: 'mailto:kh.mohamed.dev@gmail.com?subject=Inquiry',
+      icon: <Mail className="h-5 w-5 text-blue-500" aria-hidden="true" />
     },
     {
-      name: 'Professional LinkedIn',
-      value: 'linkedin.com/in/khalid-mohamed',
-      href: 'https://linkedin.com',
-      icon: <Linkedin className="h-4.5 w-4.5 text-blue-500" />
+      name: 'LinkedIn',
+      description: 'Professional profile',
+      value: 'linkedin.com/in/khalidmodev',
+      href: 'https://linkedin.com/in/khalidmodev',
+      icon: <Linkedin className="h-5 w-5 text-blue-500" aria-hidden="true" />
     },
     {
-      name: 'Core GitHub Repository',
-      value: 'github.com/kh522004',
-      href: 'https://github.com',
-      icon: <Github className="h-4.5 w-4.5 text-blue-500" />
+      name: 'GitHub',
+      description: 'Projects & source code',
+      value: 'github.com/khalidua',
+      href: 'https://github.com/khalidua',
+      icon: <Github className="h-5 w-5 text-blue-500" aria-hidden="true" />
+    },
+    {
+      name: 'Location',
+      description: 'Based in',
+      value: 'Giza, Egypt',
+      icon: <MapPin className="h-5 w-5 text-blue-500" aria-hidden="true" />
     }
   ];
 
   return (
-    <section id="contact" className="py-16 border-b border-zinc-200 dark:border-zinc-800 transition-colors duration-300">
+    <section 
+      id="contact" 
+      className="py-16 border-b border-zinc-200/60 dark:border-zinc-900/60 transition-colors duration-300"
+      aria-label="Contact information and connections"
+    >
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
         
-        {/* Editorial Header */}
-        <div className="flex items-center justify-between mb-8 border-b border-zinc-200 dark:border-zinc-800 pb-2">
-          <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-zinc-500">Secure Transmission Portal</h3>
-          <span className="text-xs text-zinc-400 dark:text-zinc-600 font-mono">[Online Channel]</span>
+        {/* Section Header */}
+        <div className="mb-10 border-b border-zinc-200/60 dark:border-zinc-850 pb-4 space-y-2">
+          <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-400 font-mono">
+            Let's Connect
+          </h3>
+          <p className="text-sm text-zinc-550 dark:text-zinc-405 font-sans max-w-2xl leading-relaxed">
+            I'm always happy to discuss software engineering, backend development, internship opportunities, or interesting projects. Feel free to reach out.
+          </p>
         </div>
 
-        {/* Form and Contact Lists Wrapper Grid */}
+        {/* Layout Grid */}
         <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
           
-          {/* LEFT: Contact Lists (Covers 2 columns) */}
+          {/* LEFT: Contact Info Cards (Covers 2 columns) */}
           <div className="md:col-span-2 space-y-5">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-400 font-mono flex items-center gap-1.5">
-              <Terminal className="h-4 w-4" />
-              <span>Identity Endpoints</span>
-            </h3>
+            <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-450 dark:text-zinc-500 font-mono flex items-center gap-2 mb-3">
+              <Mail className="h-4 w-4 text-blue-500" aria-hidden="true" />
+              <span>Contact</span>
+            </h4>
 
-            <div className="space-y-4">
-              {contactOptions.map((opt) => (
-                <a
-                  key={opt.name}
-                  href={opt.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-start gap-3.5 p-4 rounded-lg border border-zinc-200/80 bg-white/50 hover:bg-zinc-50/85 hover:border-zinc-300 dark:border-zinc-800 dark:bg-zinc-900/10 dark:hover:bg-zinc-900/30 dark:hover:border-zinc-800 transition-all group"
-                >
-                  <div className="rounded p-1.5 bg-zinc-100 dark:bg-zinc-900 dark:group-hover:bg-zinc-800 transition-colors">
-                    {opt.icon}
-                  </div>
-                  <div className="space-y-0.5 min-w-0">
-                    <span className="block text-[10px] font-mono font-bold uppercase text-zinc-400 dark:text-zinc-500">
-                      {opt.name}
-                    </span>
-                    <span className="block text-xs font-semibold text-zinc-800 dark:text-zinc-200 truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                      {opt.value}
-                    </span>
-                  </div>
-                </a>
-              ))}
-            </div>
+            {/* Clean Info Cards with Hover Improvements */}
+            <div className="space-y-4" aria-label="Contact options">
+              {contactOptions.map((opt) => {
+                const cardContent = (
+                  <>
+                    <div className="rounded-lg p-2 bg-zinc-100 dark:bg-zinc-900 dark:group-hover:bg-zinc-800 transition-colors shrink-0">
+                      {opt.icon}
+                    </div>
+                    <div className="space-y-0.5 min-w-0">
+                      <span className="block text-sm font-bold text-zinc-900 dark:text-white">
+                        {opt.name}
+                      </span>
+                      <span className="block text-[10px] text-zinc-400 dark:text-zinc-500 font-sans">
+                        {opt.description}
+                      </span>
+                      <span className="block text-xs sm:text-sm font-extrabold text-zinc-805 dark:text-zinc-200 truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors pt-0.5">
+                        {opt.value}
+                      </span>
+                    </div>
+                  </>
+                );
 
-            <div className="rounded-lg border border-zinc-200 bg-zinc-50/50 p-4 font-mono text-[11px] text-zinc-500 leading-normal dark:border-zinc-800 dark:bg-zinc-950/20">
-              <div className="font-bold text-zinc-700 dark:text-zinc-300 mb-1 flex items-center gap-1.5">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                <span>Response SLA Indicator:</span>
-              </div>
-              <p className="pl-3.5">
-                Recruiter inbounds are processed automatically. Response time averages &lt; 8 hours. Summer 2026 scheduling is open.
-              </p>
+                if (opt.href) {
+                  return (
+                    <a
+                      key={opt.name}
+                      href={opt.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-start gap-4 p-4 rounded-xl border border-zinc-205 bg-white/50 hover:bg-zinc-50/80 hover:border-blue-500/40 dark:border-zinc-800 dark:bg-zinc-900/10 dark:hover:bg-zinc-900/30 dark:hover:border-blue-500/40 hover:-translate-y-0.5 hover:shadow-md transition-all duration-300 group shadow-xs focus:outline-hidden focus:ring-2 focus:ring-blue-500/20"
+                      aria-label={`${opt.name}: ${opt.description}. ${opt.value}`}
+                    >
+                      {cardContent}
+                    </a>
+                  );
+                }
+
+                return (
+                  <div
+                    key={opt.name}
+                    className="flex items-start gap-4 p-4 rounded-xl border border-zinc-205 bg-white/50 dark:border-zinc-800 dark:bg-zinc-900/10 transition-all duration-300 shadow-xs"
+                    aria-label={`${opt.name}: ${opt.description}. ${opt.value}`}
+                  >
+                    <div className="rounded-lg p-2 bg-zinc-100 dark:bg-zinc-900 transition-colors shrink-0">
+                      {opt.icon}
+                    </div>
+                    <div className="space-y-0.5 min-w-0">
+                      <span className="block text-sm font-bold text-zinc-900 dark:text-white">
+                        {opt.name}
+                      </span>
+                      <span className="block text-[10px] text-zinc-400 dark:text-zinc-500 font-sans">
+                        {opt.description}
+                      </span>
+                      <span className="block text-xs sm:text-sm font-extrabold text-zinc-805 dark:text-zinc-200 truncate pt-0.5">
+                        {opt.value}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
 
-          {/* RIGHT: Direct Message Contact Form (Covers 3 columns) */}
+          {/* RIGHT: Call-to-Action Card (Covers 3 columns) */}
           <div className="md:col-span-3">
-            <div className="border border-zinc-200 bg-white rounded-lg p-6 shadow-xs dark:border-zinc-800 dark:bg-zinc-900/20">
+            <div className="border border-zinc-200 bg-white rounded-xl p-6 md:p-8 shadow-xs dark:border-zinc-800 dark:bg-zinc-900/20 flex flex-col justify-between h-full space-y-8">
               
-              <div className="flex items-center gap-1.5 mb-5 border-b border-zinc-200 dark:border-zinc-800 pb-2.5">
-                <MessageSquareText className="h-4 w-4 text-blue-500" />
-                <h3 className="text-xs font-bold font-mono uppercase text-zinc-700 dark:text-zinc-300">
-                  Send Direct Routing Message
+              <div className="space-y-4 flex flex-col">
+                {/* Availability Badge */}
+                <div 
+                  className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 dark:bg-emerald-500/15 border border-emerald-500/15 rounded-full text-[11px] font-semibold text-emerald-850 dark:text-emerald-400 w-fit mb-3"
+                  role="status"
+                >
+                  <span className="relative flex h-1.5 w-1.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
+                  </span>
+                  <span>Open to Software Engineering Internships</span>
+                </div>
+
+                <h3 className="text-xl sm:text-2xl font-extrabold text-zinc-900 dark:text-white tracking-tight leading-snug">
+                  Interested in working together?
                 </h3>
+                
+                <p className="text-sm text-zinc-550 dark:text-zinc-400 leading-relaxed font-sans">
+                  I'm currently looking for Software Engineering internship opportunities where I can contribute, learn from experienced engineers, and continue growing as a backend and full-stack developer. If you think we'd be a good fit, I'd love to hear from you.
+                </p>
               </div>
 
-              {submitSuccess ? (
-                <div className="rounded-md bg-emerald-500/10 p-4 border border-emerald-500/20 flex gap-3 text-emerald-800 dark:text-emerald-400">
-                  <CheckCircle2 className="h-5 w-5 text-emerald-500 shrink-0 mt-0.5 animate-bounce" />
-                  <div className="space-y-1 font-sans">
-                    <div className="font-semibold text-xs font-mono uppercase tracking-wider">Message Relayed Successfully!</div>
-                    <p className="text-xs leading-normal font-sans">
-                      Thank you for connecting. Your transmission has been queued. I will retrieve your credentials and respond shortly.
-                    </p>
-                  </div>
-                </div>
-              ) : (
-                <form onSubmit={handleSubmit} className="space-y-4 text-xs font-mono">
-                  
-                  {/* Name and Email input row */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-1.5 col-span-1">
-                      <label htmlFor="input-name" className="text-[10px] uppercase font-bold text-zinc-500">
-                        Full Name *
-                      </label>
-                      <input
-                        id="input-name"
-                        type="text"
-                        required
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        placeholder="John Doe"
-                        className="w-full rounded border border-zinc-200 bg-transparent px-3 py-2 text-zinc-800 focus:border-blue-500 focus:outline-hidden dark:border-zinc-800 dark:text-zinc-100 transition-colors placeholder:text-zinc-400"
-                      />
-                    </div>
+              {/* Action Buttons with increased spacing */}
+              <div className="pt-6 space-y-3">
+                <a
+                  href="mailto:kh.mohamed.dev@gmail.com?subject=Inquiry"
+                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-505 py-3.5 font-bold text-white shadow hover:shadow-md transition-all duration-300 active:scale-[0.99] text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500/20"
+                  aria-label="Send email to kh.mohamed.dev@gmail.com"
+                >
+                  <span>Email Me</span>
+                  <Send className="h-4 w-4" aria-hidden="true" />
+                </a>
 
-                    <div className="space-y-1.5 col-span-1">
-                      <label htmlFor="input-email" className="text-[10px] uppercase font-bold text-zinc-500">
-                        Email Address *
-                      </label>
-                      <input
-                        id="input-email"
-                        type="email"
-                        required
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="john@organization.com"
-                        className="w-full rounded border border-zinc-200 bg-transparent px-3 py-2 text-zinc-800 focus:border-blue-500 focus:outline-hidden dark:border-zinc-800 dark:text-zinc-100 transition-colors placeholder:text-zinc-400"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Subject */}
-                  <div className="space-y-1.5">
-                    <label htmlFor="input-subject" className="text-[10px] uppercase font-bold text-zinc-505">
-                      Subject
-                    </label>
-                    <input
-                      id="input-subject"
-                      type="text"
-                      value={subject}
-                      onChange={(e) => setSubject(e.target.value)}
-                      placeholder="Opportunity / Technical Inquiry"
-                      className="w-full rounded border border-zinc-200 bg-transparent px-3 py-2 text-zinc-800 focus:border-blue-500 focus:outline-hidden dark:border-zinc-800 dark:text-zinc-100 transition-colors placeholder:text-zinc-400"
-                    />
-                  </div>
-
-                  {/* Message content */}
-                  <div className="space-y-1.5">
-                    <label htmlFor="input-message" className="text-[10px] uppercase font-bold text-zinc-505">
-                      Message Content *
-                    </label>
-                    <textarea
-                      id="input-message"
-                      rows={4}
-                      required
-                      value={message}
-                      onChange={(e) => setMessage(e.target.value)}
-                      placeholder="Specify your vacancy parameters, distributed systems requirements, or core stack goals..."
-                      className="w-full rounded border border-zinc-200 bg-transparent px-3 py-2 text-zinc-800 focus:border-blue-500 focus:outline-hidden dark:border-zinc-800 dark:text-zinc-100 transition-colors resize-y placeholder:text-zinc-400 font-sans"
-                    />
-                  </div>
-
-                  {/* Trigger submit */}
-                  <button
-                    id="btn-contact-submit"
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="flex w-full items-center justify-center gap-2 rounded bg-blue-600 py-2.5 font-bold uppercase tracking-wider text-white shadow hover:bg-blue-500 disabled:opacity-50 active:scale-[0.99] transition-all cursor-pointer"
-                  >
-                    <span>{isSubmitting ? 'Relaying Message...' : 'Transmit Connection'}</span>
-                    <Send className="h-3.5 w-3.5" />
-                  </button>
-
-                </form>
-              )}
+                {/* Secondary CTA (outlined resume link) */}
+                <a
+                  href="/resume.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex w-full items-center justify-center gap-2 rounded-xl border border-zinc-200 hover:border-zinc-300 dark:border-zinc-800 dark:hover:border-zinc-700 bg-transparent py-3.5 font-semibold text-zinc-805 dark:text-zinc-200 transition-all duration-300 active:scale-[0.99] text-sm hover:bg-zinc-50 dark:hover:bg-zinc-900/40 focus:outline-hidden focus:ring-2 focus:ring-blue-500/10"
+                  aria-label="Resume"
+                >
+                  <span>Resume</span>
+                  <FileText className="h-4 w-4" aria-hidden="true" />
+                </a>
+              </div>
 
             </div>
           </div>

@@ -1,74 +1,81 @@
 import { experiences, educationList } from '../data';
-import { Calendar, MapPin, Award, GraduationCap, Briefcase } from 'lucide-react';
+import { Calendar, Award, GraduationCap, Briefcase, Terminal } from 'lucide-react';
 
 export default function Experience() {
   return (
-    <section id="experience" className="py-16 border-b border-zinc-200 dark:border-zinc-800 transition-colors duration-300">
+    <section 
+      id="experience" 
+      className="py-16 border-b border-zinc-200/60 dark:border-zinc-900/60 transition-colors duration-300"
+      aria-label="Experience and Education"
+    >
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
         
-        {/* Editorial Header */}
-        <div className="flex items-center justify-between mb-8 border-b border-zinc-200 dark:border-zinc-800 pb-2">
-          <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-zinc-500">History & Academic Standard</h3>
-          <span className="text-xs text-zinc-400 dark:text-zinc-600 font-mono">[Chronological Registry]</span>
+        {/* Section Header */}
+        <div className="flex items-center justify-between mb-8 border-b border-zinc-200/60 dark:border-zinc-850 pb-2">
+          <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-400 font-mono">
+            Experience & Education
+          </h3>
+          <span className="text-xs text-zinc-450 dark:text-zinc-650 font-mono" aria-hidden="true">
+            Building Through Experience
+          </span>
         </div>
 
-        {/* Chronological Grid Split */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+        {/* Layout split into left and right columns with increased whitespace */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16">
           
-          {/* LEFT: Experience Column */}
-          <div className="space-y-6">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-zinc-400 font-mono flex items-center gap-2">
-              <Briefcase className="h-4 w-4 text-blue-500" />
-              <span>Professional Experience</span>
-            </h3>
+          {/* LEFT COLUMN: Experience */}
+          <div className="space-y-5">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-450 dark:text-zinc-400 font-mono flex items-center gap-2 mb-3">
+              <Briefcase className="h-4 w-4 text-blue-500" aria-hidden="true" />
+              <span>Experience</span>
+            </h4>
 
-            <div className="relative border-l border-zinc-200 pl-4 space-y-8 dark:border-zinc-800">
+            <div className="relative border-l border-zinc-200/60 pl-4 space-y-6 dark:border-zinc-850">
               {experiences.map((exp) => (
                 <div key={exp.id} className="relative group">
-                  {/* Bullet Dot */}
-                  <span className="absolute -left-[20.5px] top-1.5 h-3 w-3 rounded-full border-2 border-white bg-blue-500 dark:border-zinc-950 transition-transform group-hover:scale-110" />
+                  {/* Timeline Dot (slightly larger, precisely centered) */}
+                  <span 
+                    className="absolute -left-[24.5px] top-1.5 h-4 w-4 rounded-full border-2 border-white bg-blue-500 dark:border-zinc-950 transition-all group-hover:scale-110 shadow-sm"
+                    aria-hidden="true"
+                  />
 
                   <div className="space-y-1.5">
-                    {/* Role Title */}
-                    <h4 className="text-sm font-bold text-zinc-900 dark:text-white leading-snug">
+                    {/* Role (Largest) */}
+                    <h5 className="text-base font-extrabold text-zinc-900 dark:text-white leading-snug">
                       {exp.role}
-                    </h4>
+                    </h5>
 
-                    {/* Company and Meta */}
-                    <div className="flex flex-wrap items-center gap-x-2 text-[11px] font-mono text-zinc-405 dark:text-zinc-400">
-                      <span className="font-semibold text-zinc-800 dark:text-zinc-200">{exp.company}</span>
-                      <span className="text-zinc-300 dark:text-zinc-700">|</span>
-                      <span className="flex items-center gap-0.5">
-                        <MapPin className="h-3 w-3" />
-                        <span>{exp.location}</span>
-                      </span>
+                    {/* Company and Location (Reduced Location emphasis) */}
+                    <div className="text-xs sm:text-sm font-bold text-zinc-800 dark:text-zinc-200 flex items-baseline gap-2">
+                      <span>{exp.company}</span>
+                      {exp.location && (
+                        <span className="text-[10px] font-normal text-zinc-400 dark:text-zinc-500 font-sans">
+                          ({exp.location})
+                        </span>
+                      )}
                     </div>
 
-                    {/* Duration Badge */}
-                    <span className="inline-flex items-center gap-1 leading-none rounded-full bg-zinc-100 px-2 py-0.5 text-[9.5px] font-mono font-medium text-zinc-650 dark:bg-zinc-850 dark:text-zinc-400 border border-zinc-200/50 dark:border-zinc-800">
-                      <Calendar className="h-2.5 w-2.5" />
+                    {/* Duration */}
+                    <div className="flex items-center gap-1 text-[10.5px] font-mono text-zinc-500 dark:text-zinc-400">
+                      <Calendar className="h-3 w-3" aria-hidden="true" />
                       <span>{exp.duration}</span>
-                    </span>
+                    </div>
 
-                    {/* Accomplishments Bullet Point list */}
-                    <ul className="space-y-2 pt-2.5 text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed font-sans">
-                      {exp.description.map((bullet, idx) => {
-                        // Highlight first portion of bullet (bold text preceding a comma or specific word)
-                        const splitPoint = bullet.indexOf('", "'); // simple or just render
-                        return (
-                          <li key={idx} className="list-disc pl-1 ml-3 marker:text-zinc-400">
-                            {bullet}
-                          </li>
-                        );
-                      })}
+                    {/* Bullet Accomplishments (Max 4 bullet points, sliced dynamically) */}
+                    <ul className="space-y-1 pt-1.5 text-xs text-zinc-600 dark:text-zinc-405 leading-relaxed font-sans list-disc pl-4">
+                      {exp.description.slice(0, 4).map((bullet, idx) => (
+                        <li key={idx} className="marker:text-zinc-400 dark:marker:text-zinc-600 pl-0.5">
+                          {bullet}
+                        </li>
+                      ))}
                     </ul>
 
-                    {/* Role Tech badging list */}
-                    <div className="flex flex-wrap gap-1 pt-3">
+                    {/* Tag list (Rounded pills, consistent sizing, responsive tag sizes for mobile) */}
+                    <div className="flex flex-wrap gap-1.5 pt-2" aria-label="Skills used">
                       {exp.tags.map((tag) => (
                         <span
                           key={tag}
-                          className="px-1.5 py-0.5 text-[9px] font-mono font-bold bg-zinc-50 border border-zinc-200/60 text-zinc-500 rounded dark:bg-zinc-900/40 dark:border-zinc-850 dark:text-zinc-405"
+                          className="px-2 py-0.5 text-[8.5px] sm:text-[9.5px] font-mono font-semibold bg-zinc-100 dark:bg-zinc-900 border border-zinc-200/50 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 rounded-full shadow-sm"
                         >
                           {tag}
                         </span>
@@ -81,86 +88,121 @@ export default function Experience() {
             </div>
           </div>
 
-          {/* RIGHT: Education Column */}
-          <div className="space-y-6">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-zinc-400 font-mono flex items-center gap-2">
-              <GraduationCap className="h-4.5 w-4.5 text-emerald-500" />
-              <span>Academic Education</span>
-            </h3>
+          {/* RIGHT COLUMN: Education */}
+          <div className="space-y-5">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-450 dark:text-zinc-400 font-mono flex items-center gap-2 mb-3">
+              <GraduationCap className="h-4.5 w-4.5 text-emerald-500" aria-hidden="true" />
+              <span>Education</span>
+            </h4>
 
-            <div className="relative border-l border-zinc-200 pl-4 space-y-8 dark:border-zinc-800">
-              {educationList.map((edu, idx) => (
-                <div key={idx} className="relative group">
-                  {/* Bullet dot */}
-                  <span className="absolute -left-[20.5px] top-1.5 h-3 w-3 rounded-full border-2 border-white bg-emerald-500 dark:border-zinc-950 transition-transform group-hover:scale-110" />
+            <div className="relative border-l border-zinc-200/60 pl-4 space-y-6 dark:border-zinc-850">
+              {educationList.map((edu, idx) => {
+                // Parse coursework and remaining details
+                const courseworkDetail = edu.details.find(d => d.startsWith("Relevant Coursework:") || d.startsWith("Key coursework:"));
+                const otherDetails = edu.details.filter(d => !d.startsWith("Relevant Coursework:") && !d.startsWith("Key coursework:"));
+                
+                let courseworkList: string[] = [];
+                if (courseworkDetail) {
+                  const content = courseworkDetail.includes(":") ? courseworkDetail.split(":")[1] : courseworkDetail;
+                  courseworkList = content.split(",").map(c => c.trim()).filter(Boolean);
+                }
 
-                  <div className="space-y-1.5">
-                    
-                    {/* Degree */}
-                    <h4 className="text-sm font-bold text-zinc-900 dark:text-white leading-snug">
-                      {edu.degree}
-                    </h4>
+                return (
+                  <div key={idx} className="relative group">
+                    {/* Timeline Dot (slightly larger, precisely centered) */}
+                    <span 
+                      className="absolute -left-[24.5px] top-1.5 h-4 w-4 rounded-full border-2 border-white bg-emerald-500 dark:border-zinc-950 transition-all group-hover:scale-110 shadow-sm"
+                      aria-hidden="true"
+                    />
 
-                    {/* Institution */}
-                    <div className="flex flex-wrap items-center gap-x-2 text-[11px] font-mono text-zinc-405 dark:text-zinc-400">
-                      <span className="font-semibold text-zinc-800 dark:text-zinc-200">{edu.institution}</span>
-                      <span className="text-zinc-300 dark:text-zinc-700">|</span>
-                      <span className="flex items-center gap-0.5">
-                        <MapPin className="h-3 w-3" />
-                        <span>{edu.location}</span>
-                      </span>
-                    </div>
+                    <div className="space-y-1.5">
+                      {/* Degree */}
+                      <h5 className="text-base font-extrabold text-zinc-900 dark:text-white leading-snug">
+                        {edu.degree}
+                      </h5>
 
-                    {/* Meta Indicators: GPA & Date */}
-                    <div className="flex flex-wrap items-center gap-2 pt-0.5">
-                      <span className="inline-flex items-center gap-1 rounded bg-emerald-500/10 px-2 py-0.5 text-[9.5px] font-mono font-bold text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400 border border-emerald-500/15">
-                        <Award className="h-3 w-3" />
-                        <span>GPA: {edu.gpa}</span>
-                      </span>
+                      {/* University and Location (Reduced Location emphasis) */}
+                      <div className="text-xs sm:text-sm font-bold text-zinc-800 dark:text-zinc-200 flex items-baseline gap-2">
+                        <span>{edu.institution}</span>
+                        {edu.location && (
+                          <span className="text-[10px] font-normal text-zinc-400 dark:text-zinc-500 font-sans">
+                            ({edu.location})
+                          </span>
+                        )}
+                      </div>
 
-                      <span className="inline-flex items-center gap-1 rounded bg-zinc-100 px-2 py-0.5 text-[9.5px] font-mono font-medium text-zinc-650 dark:bg-zinc-850 dark:text-zinc-400 border border-zinc-200/50 dark:border-zinc-800">
-                        <Calendar className="h-2.5 w-2.5" />
-                        <span>{edu.duration}</span>
-                      </span>
-                    </div>
+                      {/* GPA (Stronger contrast) and Duration */}
+                      <div className="flex flex-wrap items-center gap-2 pt-0.5">
+                        <span className="inline-flex items-center gap-1 rounded-md bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 text-[9.5px] font-mono font-extrabold text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-500/20">
+                          <Award className="h-3 w-3 text-emerald-600 dark:text-emerald-400" aria-hidden="true" />
+                          <span>GPA: {edu.gpa}</span>
+                        </span>
 
-                    {/* Detailed Academic bullets */}
-                    <ul className="space-y-2 pt-3.5 text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed font-sans">
-                      {edu.details.map((detail, dIdx) => {
-                        // Bold specific headers in education list
-                        if (detail.startsWith("Key coursework") || detail.startsWith("Specialising in")) {
-                          const separatorIdx = detail.indexOf(':') !== -1 ? detail.indexOf(':') : detail.indexOf(' in');
-                          const headerText = detail.substring(0, separatorIdx + 1);
-                          const remainingText = detail.substring(separatorIdx + 1);
-                          return (
-                            <li key={dIdx} className="list-disc pl-1 ml-3 marker:text-zinc-400">
-                              <strong className="font-semibold text-zinc-900 dark:text-zinc-100">{headerText}</strong>
-                              <span>{remainingText}</span>
-                            </li>
-                          );
-                        }
-                        return (
-                          <li key={dIdx} className="list-disc pl-1 ml-3 marker:text-zinc-400">
+                        <span className="inline-flex items-center gap-1 rounded-md bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-2 py-0.5 text-[9.5px] font-mono font-medium text-zinc-600 dark:text-zinc-400">
+                          <Calendar className="h-2.5 w-2.5" aria-hidden="true" />
+                          <span>{edu.duration}</span>
+                        </span>
+                      </div>
+
+                      {/* Relevant Coursework (Highlighted as its own subsection) */}
+                      {courseworkList.length > 0 && (
+                        <div className="mt-3 space-y-1">
+                          <span className="block text-[10px] font-bold uppercase tracking-wider text-zinc-450 dark:text-zinc-400 font-mono">
+                            Relevant Coursework
+                          </span>
+                          <ul className="grid grid-cols-2 gap-x-3 gap-y-1 text-[11px] text-zinc-550 dark:text-zinc-400">
+                            {courseworkList.map((course, cIdx) => (
+                              <li key={cIdx} className="flex items-center gap-1.5 leading-normal">
+                                <span className="text-emerald-500 text-[10px]" aria-hidden="true">•</span>
+                                <span>{course}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+
+                      {/* Remaining Details */}
+                      <ul className="space-y-1 pt-1.5 text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed font-sans list-disc pl-4">
+                        {otherDetails.map((detail, dIdx) => (
+                          <li key={dIdx} className="marker:text-zinc-400 dark:marker:text-zinc-600 pl-0.5">
                             {detail}
                           </li>
-                        );
-                      })}
-                    </ul>
+                        ))}
+                      </ul>
 
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
-            {/* Quick quote highlight */}
-            <div className="border border-zinc-200/60 rounded bg-white p-4 text-xs text-zinc-500 dark:border-zinc-800 dark:bg-zinc-900/10 dark:text-zinc-400 leading-relaxed font-sans">
-              "Being educated inside Zewail City’s rigorous academic climate demands excellence. The foundational mathematics, network protocols, operating systems, and distributed structures form the direct backbone of my clean production code."
+            {/* Currently Exploring highlight */}
+            <div className="border border-zinc-200/60 dark:border-zinc-850 rounded-lg p-5 bg-zinc-50/50 dark:bg-zinc-900/10 mt-6 shadow-sm">
+              <div className="flex items-center gap-2 mb-3 text-blue-650 dark:text-blue-400">
+                <Terminal className="h-4.5 w-4.5" aria-hidden="true" />
+                <span className="text-xs font-bold uppercase tracking-wider font-mono">
+                  Currently Exploring
+                </span>
+              </div>
+              <ul className="space-y-2 text-xs sm:text-sm text-zinc-650 dark:text-zinc-400 font-sans list-none pl-1">
+                {[
+                  "Distributed Systems",
+                  "Software Architecture",
+                  "Cloud Infrastructure",
+                  "DevOps & CI/CD",
+                  "Backend Performance"
+                ].map((item, idx) => (
+                  <li key={idx} className="flex items-center gap-2">
+                    <span className="h-1.5 w-1.5 rounded-full bg-blue-500" aria-hidden="true" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
 
           </div>
 
         </div>
-
       </div>
     </section>
   );
