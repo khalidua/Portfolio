@@ -1,4 +1,5 @@
 import { Project, Experience, Education, SkillGroup } from './types';
+import { getAssetPath } from './utils/path';
 
 export const projects: Project[] = [
   {
@@ -306,7 +307,7 @@ export const profile = {
 
   linkedin: "https://linkedin.com/in/khalidmodev",
 
-  resume: "/resume.pdf",
+  resume: getAssetPath("/resume.pdf"),
 
   availability: "Open to Software Engineering Internships",
 
@@ -318,7 +319,7 @@ export const profile = {
     },
     {
       label: "Download Resume",
-      href: "/resume.pdf",
+      href: getAssetPath("/resume.pdf"),
       primary: false,
     },
   ],

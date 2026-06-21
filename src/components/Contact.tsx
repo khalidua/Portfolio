@@ -1,6 +1,7 @@
 import { Mail, Github, Linkedin, Send, FileText, MapPin } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useScrollReveal, fadeUpVariants, slideFromLeftVariants, slideFromRightVariants, staggerContainer } from '../hooks/useScrollReveal';
+import { getAssetPath } from '../utils/path';
 
 export default function Contact() {
   const { ref, isInView } = useScrollReveal(0.1);
@@ -194,7 +195,7 @@ export default function Contact() {
 
                 {/* Secondary CTA (outlined resume link) */}
                 <a
-                  href="/resume.pdf"
+                  href={getAssetPath("/resume.pdf")}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex h-11 w-full items-center justify-center gap-2 rounded-lg border border-zinc-200 hover:border-zinc-300 dark:border-zinc-800 dark:hover:border-zinc-700 bg-transparent font-bold text-zinc-800 dark:text-white transition-all duration-300 active:scale-[0.99] text-sm hover:bg-zinc-50 dark:hover:bg-zinc-900/40 focus:outline-hidden focus:ring-2 focus:ring-blue-500/10 cursor-pointer"

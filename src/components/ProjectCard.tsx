@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Project } from '../types';
+import { getAssetPath } from '../utils/path';
 import {
   Github,
   ExternalLink,
@@ -35,7 +36,7 @@ const PlaceholderCard = ({ title, subtitle, icon: Icon, imageSrc }: { title: str
     return (
       <div className="w-full shrink-0 snap-center aspect-video relative overflow-hidden bg-zinc-950">
         <img
-          src={imageSrc}
+          src={getAssetPath(imageSrc)}
           alt={title}
           loading="lazy"
           onError={() => setImageFailed(true)}

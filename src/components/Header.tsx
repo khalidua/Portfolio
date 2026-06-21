@@ -1,5 +1,6 @@
 import { Sun, Moon, Download, Menu, X, ArrowLeft, Terminal } from 'lucide-react';
 import { useState } from 'react';
+import { getAssetPath } from '../utils/path';
 
 interface HeaderProps {
   isDarkMode: boolean;
@@ -101,7 +102,7 @@ export default function Header({
               </button>
 
               <a
-                href="/resume.pdf"
+                href={getAssetPath("/resume.pdf")}
                 target="_blank"
                 rel="noopener noreferrer"
                 id="btn-header-resume"
@@ -125,7 +126,7 @@ export default function Header({
             </button>
 
             <a
-              href="/resume.pdf"
+              href={getAssetPath("/resume.pdf")}
               target="_blank"
               rel="noopener noreferrer"
               id="btn-header-resume-mobile"

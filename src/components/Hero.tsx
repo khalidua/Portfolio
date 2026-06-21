@@ -1,5 +1,6 @@
 import { Github, Linkedin } from 'lucide-react';
 import { motion } from 'motion/react';
+import { getAssetPath } from '../utils/path';
 
 interface HeroProps {
   onViewProjects: () => void;
@@ -97,7 +98,7 @@ export default function Hero({ onViewProjects, onContactClick }: HeroProps) {
             </button>
 
             <a
-              href="/resume.pdf"
+              href={getAssetPath("/resume.pdf")}
               target="_blank"
               rel="noopener noreferrer"
               id="btn-hero-resume"
