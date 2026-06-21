@@ -16,7 +16,7 @@ export interface Project {
   features: string[];
   challenges: string;
   learning: string;
-  category: 'backend' | 'fullstack' | 'security' | 'ml' | 'systems';
+  category: 'backend' | 'fullstack' | 'frontend' | 'security' | 'ml' | 'systems';
   // New technical metadata fields for high-signal case study
   projectType: string;
   cardHighlights: string[];

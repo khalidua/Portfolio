@@ -9,8 +9,16 @@
 }
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
   body {
     @apply font-sans antialiased selection:bg-blue-500/30;
+  }
+  *:focus-visible {
+    outline: 2px solid rgba(59, 130, 246, 0.5);
+    outline-offset: 2px;
+    border-radius: 4px;
   }
 }
 

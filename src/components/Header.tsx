@@ -50,7 +50,7 @@ export default function Header({
               <button
                 onClick={onBackToHome}
                 id="btn-nav-back"
-                className="group flex items-center gap-2 rounded-md border border-zinc-200 bg-white px-2.5 py-1 text-xs font-medium text-zinc-700 shadow-sm transition-all hover:bg-zinc-50 active:scale-95 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800/80"
+                className="group h-8 px-3 rounded-md border border-zinc-200 bg-white text-xs font-semibold text-zinc-700 shadow-sm transition-all hover:bg-zinc-50 active:scale-95 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-805 flex items-center gap-1.5 cursor-pointer"
               >
                 <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5" />
                 <span>Back to Home</span>
@@ -72,14 +72,14 @@ export default function Header({
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-6">
+          <div className="hidden md:flex items-center gap-8">
             {!selectedProjectSlug && (
-              <div className="flex items-center gap-5">
+              <div className="flex items-center gap-8">
                 {navItems.map((item) => (
                   <button
                     key={item.label}
                     onClick={() => handleNavClick(item.href)}
-                    className="text-xs font-medium text-zinc-600 hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-zinc-100 transition-colors"
+                    className="text-sm font-semibold text-zinc-650 hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-zinc-100 transition-colors cursor-pointer"
                   >
                     {item.label}
                   </button>
@@ -95,7 +95,7 @@ export default function Header({
                 onClick={() => setIsDarkMode(!isDarkMode)}
                 id="btn-theme-switcher"
                 aria-label="Toggle theme"
-                className="rounded-md p-1.5 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-900 dark:hover:text-zinc-100 transition-colors"
+                className="h-8 w-8 rounded-md flex items-center justify-center text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-900 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors cursor-pointer"
               >
                 {isDarkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
               </button>
@@ -105,7 +105,7 @@ export default function Header({
                 target="_blank"
                 rel="noopener noreferrer"
                 id="btn-header-resume"
-                className="flex items-center gap-1.5 rounded-md bg-zinc-900 px-3 py-1.5 text-xs font-medium text-zinc-50 shadow hover:bg-zinc-800 active:scale-95 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200 transition-all cursor-pointer"
+                className="h-9 px-4 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-zinc-50 dark:text-zinc-900 text-xs font-semibold flex items-center justify-center gap-1.5 shadow-xs hover:bg-zinc-800 dark:hover:bg-zinc-200 active:scale-98 transition-all cursor-pointer"
               >
                 <Download className="h-3.5 w-3.5" />
                 <span>Resume</span>
@@ -114,12 +114,12 @@ export default function Header({
           </div>
 
           {/* Mobile actions & hamburger indicator */}
-          <div className="flex md:hidden items-center gap-2">
+          <div className="flex md:hidden items-center gap-1.5">
             <button
               onClick={() => setIsDarkMode(!isDarkMode)}
               id="btn-theme-switcher-mobile"
               aria-label="Toggle theme"
-              className="rounded-md p-1.5 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-900 dark:hover:text-zinc-100 transition-colors"
+              className="h-8 w-8 rounded-md flex items-center justify-center text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-900 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors cursor-pointer"
             >
               {isDarkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </button>
@@ -130,7 +130,7 @@ export default function Header({
               rel="noopener noreferrer"
               id="btn-header-resume-mobile"
               aria-label="Resume"
-              className="rounded-md p-1.5 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-900 dark:hover:text-zinc-100 transition-colors flex items-center justify-center"
+              className="h-8 w-8 rounded-md flex items-center justify-center text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-900 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors cursor-pointer"
             >
               <Download className="h-4 w-4" />
             </a>
@@ -139,7 +139,7 @@ export default function Header({
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               id="btn-mobile-menu-toggle"
               aria-label="Toggle mobile menu"
-              className="rounded-md p-1.5 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-900 dark:hover:text-zinc-100 transition-colors"
+              className="h-8 w-8 rounded-md flex items-center justify-center text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-900 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors cursor-pointer"
             >
               {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
@@ -156,7 +156,7 @@ export default function Header({
               <button
                 key={item.label}
                 onClick={() => handleNavClick(item.href)}
-                className="w-full text-left py-2 text-xs font-semibold text-zinc-600 hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-zinc-100"
+                className="w-full text-left py-2 text-sm font-semibold text-zinc-650 hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-zinc-100"
               >
                 {item.label}
               </button>

@@ -1,454 +1,289 @@
 import { Project, Experience, Education, SkillGroup } from './types';
 
 export const projects: Project[] = [
-{
-  id: "1",
-
-  name: "ClipSphere",
-
-  slug: "clipsphere",
-
-  tagline:
-    "A video sharing platform where files upload and process in the background so the website stays fast and responsive.",
-
-  description:
-    "I built ClipSphere because I wanted to understand how video sites like YouTube handle huge file uploads without freezing the user interface. When a user uploads a video, processing it (like converting formats or generating thumbnails) takes too much time to handle inside a standard HTTP request.\n\nTo solve this, I built a frontend in React and a backend using Node.js and Express. Instead of making the user wait, the API receives the upload, schedules the heavy processing work in the background, and immediately lets the user know the video is processing.\n\nThis project was a great way to learn how to separate a fast user-facing API from slow background tasks using a job queue.",
-
-  image: "clipsphere.png",
-
-  category: "fullstack",
-
-  projectType: "Full-Stack Video Sharing Platform",
-
-  duration: "2026",
-
-  role: "Full-Stack Developer",
-
-  github: "YOUR_GITHUB_LINK",
-
-  live: "",
-
-  tags: [
-    "React",
-    "Node.js",
-    "Express",
-    "MongoDB",
-    "Redis",
-    "Docker",
-    "JWT",
-    "Cloudinary"
-  ],
-
-  cardHighlights: [
-    "Secure authentication using JWT.",
-    "Background processing for media-related tasks.",
-    "Containerized development using Docker."
-  ],
-
-  cardChallenge:
-    "Handling large video uploads while keeping the application responsive.",
-
-  summary:
-    "A video platform project built to learn how to handle large file uploads and slow background tasks without blocking the main website.",
-
-  problem:
-    "I've always been curious about how sites like YouTube process videos. When I tried building a basic video upload feature in a simple backend, it was a disaster. Any video larger than a few megabytes would freeze the server, causing it to time out and lock out anyone else trying to use the app. I realized I couldn't just process uploads in the main request loop; I needed a setup where the server accepts the file quickly, lets the user know it's being worked on, and processes it in the background.",
-
-  solution:
-    "I built a Node.js and Express API coupled with a React frontend that offloads video processing to a background worker queue. When a user drops a video in the UI, the frontend sends it directly to the Express server, which writes the file metadata to MongoDB, uploads the raw video file to Cloudinary, and drops a processing job into Redis.\n\nA separate background worker running BullMQ picks up the job, handles the slow conversion and thumbnail generation, and updates the database once it's done. This ensures the main web server never blocks.",
-
-  features: [
-    "Log in securely to see your own video dashboard",
-    "Drag and drop video files to start an upload",
-    "Track processing progress with a live status loader",
-    "Browse, watch, and play uploaded videos on your home feed",
-    "Download processed videos in different formats"
-  ],
-
-  challenges:
-    "The biggest headache was handling huge file uploads without crashing the Node.js server process. Originally, Express would try to buffer the entire file in RAM before saving it, which caused the server to run out of memory and crash on 200MB videos. I had to rewrite the upload handler using multer to stream the files directly to a temporary local disk directory instead of keeping them in memory, before sending them to Cloudinary. It was a tedious process of debugging stream errors and clean-up functions, but it taught me a lot about memory management in Node.",
-
-  learning:
-    "This project completely changed how I think about server resources. I originally thought a single server could do everything if it was fast enough. Now, I realize that any task taking more than a few hundred milliseconds must be handled asynchronously. If I rebuilt this today, I would use direct client-to-cloud uploads (presigned URLs) so that files go straight from the browser to Cloudinary, bypassing my Express server entirely to save bandwidth and CPU cycles.",
-
-  teamSize: "Solo Project",
-
-  status: "Completed"
-}
-,
-{
-  id: "2",
-
-  name: "Hybrid Ephemeral Messenger",
-
-  slug: "hybrid-ephemeral-messenger",
-
-  tagline:
-    "A real-time messaging app where chat rooms and messages automatically self-destruct after a set timer.",
-
-  description:
-    "I built this chat app to explore real-time communication and how to handle data that shouldn't live forever. I wanted to create a simple, privacy-focused messaging platform where rooms and messages disappear automatically after a set period.\n\nThe app uses React for the UI, Node.js and Express for the API, and Socket.IO to keep the chats in sync. The real magic happens in Redis, where I set up automatic expiration times for messages so they disappear from the cache and database without manual cleanup.\n\nIt was a great project for learning how web sockets keep users connected and how to work with memory-efficient key-value stores.",
-
-  image: "messenger.png",
-
-  category: "backend",
-
-  projectType: "Real-Time Messaging Platform",
-
-  duration: "2026",
-
-  role: "Backend & Full-Stack Developer",
-
-  github: "YOUR_GITHUB_LINK",
-
-  live: "",
-
-  tags: [
-    "React",
-    "Node.js",
-    "Express",
-    "Socket.IO",
-    "Redis",
-    "MongoDB",
-    "Docker",
-    "Firebase Authentication"
-  ],
-
-  cardHighlights: [
-    "Real-time communication using Socket.IO.",
-    "Automatic message expiration using Redis TTL.",
-    "Dockerized multi-service architecture."
-  ],
-
-  cardChallenge:
-    "Building a messaging system that feels instant while ensuring expired messages are automatically removed.",
-
-  summary:
-    "A chat application that uses WebSockets for real-time messaging and Redis to automatically delete messages after their expiration time.",
-
-  problem:
-    "I wanted to build a real-time messaging app, but I was uncomfortable with how most messaging platforms store every single text message forever. I wanted a private space where I could chat with friends, knowing that my rooms and conversations would completely self-destruct after a short timer, without leaving leftovers in database backups.",
-
-  solution:
-    "I used Redis to cache active chats and set a TTL (Time-To-Live) on each message key. When the TTL expires, Redis automatically deletes the key. I also integrated Firebase Authentication to make signup secure, and Socket.IO to push messages to active users instantly. If a user joins later, the app fetches whatever unexpired messages are left in the database.",
-
-  features: [
-    "Create a temporary chat room with a custom destruction timer",
-    "Send instant messages that disappear for everyone once the timer runs out",
-    "See typing indicators when a friend is drafting a message",
-    "Check who is currently online in the chat room",
-    "Log in securely using a Google account via Firebase"
-  ],
-
-  challenges:
-    "I ran into a tough sync issue when messages expired in Redis. While Redis deleted the keys, the users' browser screens didn't update automatically, meaning expired messages stayed visible until the page refreshed. To fix this, I had to configure Redis keyspace notifications in my Docker database configuration. This let my Node.js server listen for Redis expired events and immediately emit a Socket.IO message to delete the text from the screens of all connected clients in real time.",
-
-  learning:
-    "I realized that memory is a precious resource and databases don't always need to write to disk. Prior to this, I used MongoDB for everything. Working with Redis taught me how to structure data entirely in memory. If I rebuilt this today, I would implement End-to-End Encryption (E2EE) using the Web Crypto API so that even the Node.js server cannot read the messages while they are transit or sitting in Redis.",
-
-  teamSize: "Solo Project",
-
-  status: "Completed"
-}
-,
-{
-  id: "3",
-
-  name: "INKIX",
-
-  slug: "inkix",
-
-  tagline:
-    "A custom shoe design platform that lets users personalize sneakers through an interactive web interface before placing an order.",
-
-  description:
-    "INKIX is a web application that allows users to customize shoes by selecting colors, materials, and design elements through an intuitive interface. The project focused on creating a smooth user experience while combining modern frontend development with backend functionality.\n\nThis project was built to explore how customization platforms work while improving my frontend and full-stack development skills. The main goal was to create a responsive application that makes designing personalized shoes simple and enjoyable.",
-
-  image: "inkix.png",
-
-  category: "fullstack",
-
-  projectType: "Full-Stack Web Application • UI/UX Design",
-
-  duration: "2026",
-
-  role: "Full-Stack Developer",
-
-  github: "YOUR_GITHUB_LINK",
-
-  live: "",
-
-  tags: [
-    "React",
-    "TypeScript",
-    "Tailwind CSS",
-    "Node.js",
-    "Express",
-    "MongoDB"
-  ],
-
-  cardHighlights: [
-    "Interactive shoe customization.",
-    "Live visual updates.",
-    "Order placement workflow."
-  ],
-
-  cardChallenge:
-    "Managing state as users continuously modified their design.",
-
-  summary:
-    "Build an interactive shoe customization platform where users can personalize products through a clean interface while learning full-stack development and UI/UX principles.",
-
-  problem:
-    "Many online customization tools feel cluttered or difficult to use. I wanted to design a cleaner experience where users could experiment with different shoe designs without feeling overwhelmed.",
-
-  solution:
-    "I designed and developed a responsive web application that provides an interactive customization workflow. Users can modify different parts of a shoe, preview their design, and manage their selections through a clean interface.",
-
-  features: [
-    "Interactive shoe customization",
-    "Live visual updates",
-    "Responsive user interface",
-    "User authentication",
-    "Product management",
-    "Order workflow"
-  ],
-
-  challenges:
-    "Keeping the customization interface intuitive while supporting multiple design options was tough. I also had to manage application state as users continuously modified their design, and make sure the layout worked well on both desktop and mobile screens.",
-
-  learning:
-    "This project strengthened my understanding of UI/UX design principles and showed me how important state management becomes in interactive applications. It also helped me improve communication between the frontend and backend while building a complete user-facing product.",
-
-  teamSize: "Solo Project",
-
-  status: "Completed"
-}
-,
-{
-  id: "4",
-
-  name: "ZC League",
-
-  slug: "zc-league",
-
-  tagline:
-    "A sports league manager that helps organizers schedule university matches and update live scores.",
-
-  description:
-    "Our university tournaments were always organized using static Excel sheets and chaotic WhatsApp group chats, which made it hard to keep track of schedules and live scores. I decided to build ZC League to centralize everything in one place.\n\nI built a web platform where tournament administrators can create leagues, input teams, and generate match schedules automatically. Referees have special access to update match scores live, and players can log in to view the latest standings, upcoming matches, and stats.\n\nThis project helped me learn database design and how to manage different user permissions in a real web application.",
-
-  image: "zcleague.png",
-
-  category: "fullstack",
-
-  projectType: "Sports League Management System",
-
-  duration: "2026",
-
-  role: "Lead Full-Stack Developer",
-
-  github: "YOUR_GITHUB_LINK",
-
-  live: "",
-
-  tags: [
-    "React",
-    "Node.js",
-    "Express",
-    "PostgreSQL",
-    "Socket.IO",
-    "Docker",
-    "JWT",
-    "Tailwind CSS"
-  ],
-
-  cardHighlights: [
-    "Tournament scheduling and fixture management.",
-    "Real-time score updates using Socket.IO.",
-    "Role-based access for administrators, referees, and players."
-  ],
-
-  cardChallenge:
-    "Keeping match information synchronized across connected users while maintaining a clean and scalable backend architecture.",
-
-  summary:
-    "A tournament web app replacing manual spreadsheets with automated scheduling, standing tables, and live score updates.",
-
-  problem:
-    "Our university sports league was organized entirely via messy spreadsheets and WhatsApp group chats. It was a nightmare. Organizers would accidentally schedule two games on the same field at the same time, referees didn't know which games they were assigned to, and players had to wait hours for standings to be updated manually. I wanted to build a web app to automate all of this.",
-
-  solution:
-    "I developed ZC League, a full-stack tournament manager. I wrote a scheduling script that automatically generates round-robin fixtures ensuring no team or referee is double-booked. I built a PostgreSQL database with strict foreign key constraints to model leagues, teams, matches, and players, and created a dashboard where referees can update game scores live, immediately updating standings tables across the app via Socket.IO.",
-
-  features: [
-    "Generate complete, conflict-free match schedules with one click",
-    "Track live scores and goal scorers as they happen",
-    "View automatically updated league standings and goal statistics",
-    "Log in as a referee to enter match events directly from the sideline",
-    "Browse teams, player profiles, and match histories"
-  ],
-
-  challenges:
-    "The hardest part was maintaining data consistency during live score updates. If a referee recorded a goal, the database had to update the match score, increment the player's goal count, recalculate both teams' points and goal differences, and update the league table. If any of those queries failed, the tables would mismatch. I had to learn how to write SQL database transactions in PostgreSQL using knex/pg to group these queries. If one step failed, the entire transaction rolled back, preventing corrupted tournament standings.",
-
-  learning:
-    "I originally thought NoSQL databases were always better because they are easy to start with, but this project made me realize the massive value of SQL constraints. Setting up relational integrity saved me from writing hundreds of lines of validation checks in Javascript. If I rebuilt this today, I would add a double-blind score reporting system where both team captains must agree on the final score before the standings update, reducing the admin workload even further.",
-
-  teamSize: "Solo Project",
-
-  status: "Completed"
-}
-,
-{
-  id: "5",
-
-  name: "Social Media Platform",
-
-  slug: "social-network",
-
-  tagline:
-    "A social media website featuring user profiles, posts, friendships, and live notifications.",
-
-  description:
-    "I wanted to build a social media site to learn how to handle complex relationships between users, like friends, likes, and comments. The backend is built with Express and MongoDB, while the frontend is a React application.\n\nThe app supports user signup, creating posts with text and images, commenting, liking, sending friend requests, and getting real-time notifications when someone interacts with your profile.\n\nIt was a challenging project because of how many features are connected. It taught me how to keep my code organized and modular.",
-
-  image: "social-network.png",
-
-  category: "fullstack",
-
-  projectType: "Social Media Platform",
-
-  duration: "2026",
-
-  role: "Backend & Full-Stack Developer",
-
-  github: "YOUR_GITHUB_LINK",
-
-  live: "",
-
-  tags: [
-    "React",
-    "Node.js",
-    "Express",
-    "MongoDB",
-    "Socket.IO",
-    "JWT",
-    "Docker",
-    "Tailwind CSS"
-  ],
-
-  cardHighlights: [
-    "Secure authentication using JWT.",
-    "Real-time notifications and messaging.",
-    "RESTful API with modular backend architecture."
-  ],
-
-  cardChallenge:
-    "Designing a backend capable of managing multiple social features while keeping the codebase modular and maintainable.",
-
-  summary:
-    "A full-stack social network built to learn database relationships, user-to-user interactions, and real-time feeds.",
-
-  problem:
-    "I wanted to understand how social media backends work behind the scenes. Specifically, I wanted to learn how to model complex relationships—like following a user, commenting on a thread, and displaying dynamic feeds—without making my API slow down as the database grew.",
-
-  solution:
-    "I built a social media backend using Node.js, Express, and MongoDB, complete with a React frontend. The platform supports user profiles, posts with image uploads, likes, nested comments, and a friend request system. To make the app feel alive, I added Socket.IO to push instant notifications whenever someone likes your post or sends you a friend request.",
-
-  features: [
-    "Personalize your profile page with a bio and avatar",
-    "Share posts with text and image uploads",
-    "Like and comment on posts to interact with friends",
-    "Send, accept, or decline friend requests",
-    "Get instant visual notifications when someone interacts with your posts"
-  ],
-
-  challenges:
-    "I ran into major performance issues when fetching the home feed. Originally, my feed query did multiple separate database queries: getting the user's friends, finding their posts, and lookup info for likes. It was incredibly slow. I had to learn MongoDB aggregation pipelines, using $lookup and $project to fetch all posts, join user details, check if the current user liked each post, and paginate the results in a single database roundtrip. This cut my API response times from 800ms to under 50ms.",
-
-  learning:
-    "The biggest mistake I made was not paginating the API responses from day one. I originally fetched all comments for a post at once, which worked fine with 5 comments but crashed the UI when I tested it with 100 comments. Now, I paginate every list query by default. If I rebuilt this today, I would use PostgreSQL instead of MongoDB. Modeling friendships and friend-of-friend relations is much cleaner and faster with relational tables and joins than NoSQL arrays.",
-
-  teamSize: "Solo Project",
-
-  status: "Completed"
-}
-,
-{
-  id: "6",
-
-  name: "BingeBox",
-
-  slug: "bingebox",
-
-  tagline:
-    "Movie & TV Streaming Platform",
-
-  description:
-    "BingeBox is a full-stack streaming platform inspired by modern entertainment services. The goal was to design a polished user experience while building a scalable application structure with reusable components, API integration, authentication, and responsive layouts.\n\nThis project was built to recreate the experience of a modern streaming platform while improving my frontend architecture and full-stack development skills. The application allows users to browse movies and TV shows, search content, view detailed information, and manage a personalized watchlist through a clean and responsive interface.",
-
-  image: "bingebox.png",
-
-  category: "fullstack",
-
-  projectType: "Full-Stack Web Application",
-
-  duration: "2025",
-
-  role: "Full-Stack Developer",
-
-  github: "YOUR_GITHUB_LINK",
-
-  live: "",
-
-  tags: [
-    "React",
-    "TypeScript",
-    "Tailwind CSS",
-    "Node.js",
-    "Express",
-    "MongoDB",
-    "Docker"
-  ],
-
-  cardHighlights: [
-    "Browse movies and TV shows.",
-    "Detailed movie pages and search.",
-    "Personal watchlist management."
-  ],
-
-  cardChallenge:
-    "Organizing the frontend into reusable components while keeping state management simple.",
-
-  summary:
-    "I built BingeBox to recreate the experience of a modern streaming platform while improving my frontend architecture and full-stack development skills. The application allows users to browse movies and TV shows, search content, view detailed information, and manage a personalized watchlist through a clean and responsive interface.",
-
-  problem:
-    "I wanted to understand how streaming platforms organize large collections of content while maintaining a smooth and intuitive user experience. This project allowed me to practice designing a frontend that remains fast and organized as the application grows.",
-
-  solution:
-    "I designed and built a responsive web application where users can browse movies, search content, view detailed information, and manage their watchlist. The application communicates with a backend API while keeping the interface modular and easy to maintain.",
-
-  features: [
-    "Browse movies and TV shows",
-    "Search functionality",
-    "Detailed movie pages",
-    "User authentication",
-    "Personal watchlist",
-    "Responsive design"
-  ],
-
-  challenges:
-    "One of the biggest challenges was organizing the frontend into reusable components while keeping state management simple. Another challenge was designing an interface that remained responsive and easy to navigate across different screen sizes.",
-
-  learning:
-    "This project strengthened my understanding of frontend architecture, reusable component design, routing, API integration, and building responsive user interfaces. It also reinforced the importance of organizing code as applications become larger.",
-
-  teamSize: "Solo Project",
-
-  status: "Completed"
-}
+  {
+    id: "1",
+    name: "ClipSphere",
+    slug: "clipsphere",
+    tagline: "A modular, full-stack short-form video sharing platform with presigned S3 uploads, background workers, and Stripe creator tipping.",
+    description: "ClipSphere is a video sharing social platform built with Next.js and Node.js. It offloads CPU-intensive media processing to BullMQ background workers, stores media securely using S3-compatible MinIO presigned URLs, and enables content monetization via integrated Stripe Checkout webhooks.",
+    image: "clipsphere.png",
+    category: "fullstack",
+    projectType: "Full-Stack Video Platform",
+    duration: "2026",
+    role: "Full-Stack Developer",
+    github: "https://github.com/Abdelrahmann-Abdelrassoul/WEB-Project",
+    live: "",
+    tags: [
+      "Next.js",
+      "Node.js",
+      "Express",
+      "MongoDB",
+      "MinIO (S3)",
+      "Redis",
+      "BullMQ",
+      "Socket.io",
+      "Stripe API",
+      "Docker",
+      "Nginx",
+      "Tailwind CSS",
+      "JWT",
+      "fluent-ffmpeg"
+    ],
+    cardHighlights: [
+      "Direct S3 upload via presigned URLs",
+      "Asynchronous background queues",
+      "Stripe monetization & webhook ledger"
+    ],
+    cardChallenge: "Preventing server blockages and timeouts during large media uploads.",
+    summary: "A full-stack creator platform featuring S3 video uploads, background transcoding queues, real-time alerts, and Stripe monetization.",
+    problem: "Uploading large video files directly through a web server blocks the single-threaded Node.js event loop, resulting in memory exhaustion and request timeouts for other concurrent users.",
+    solution: "I built a three-layer backend that bypasses the app server by generating MinIO S3 presigned URLs for direct browser uploads. Transcoding and email alerts are queued asynchronously in Redis and handled by BullMQ workers.",
+    features: [
+      "Secure JWT user authentication and Role-Based Access Control",
+      "Direct video upload using secure MinIO presigned S3 URLs",
+      "Real-time notifications for likes and follows via Socket.io",
+      "Creator tipping integration using Stripe Checkout",
+      "Automatic video duration validation using ffmpeg",
+      "Interactive dashboard for tracking tips and transaction ledgers"
+    ],
+    challenges: "Handling partial and failed video uploads to prevent orphaned files in S3 and clean up database records, and handling Stripe webhooks locally during development.",
+    learning: "Offloading file uploads directly to object storage drastically reduces server workload. It also highlighted the value of structured background queues for CPU-heavy media workflows.",
+    teamSize: "Group Project (4 members)",
+    status: "Completed"
+  },
+  {
+    id: "2",
+    name: "Hybrid Ephemeral Messenger",
+    slug: "hybrid-ephemeral-messenger",
+    tagline: "A privacy-first chat application featuring Google auth, Twilio SMS MFA, and client-side AES encrypted messaging with Redis TTL auto-destruct.",
+    description: "A real-time chat application with permanent identity structures but volatile messages. Built with Next.js, Express, and Socket.IO, it uses a hybrid storage model (MongoDB for user profiles, Redis for chats) and implements client-side encryption alongside Redis keyspace notification events to automatically sync message purges.",
+    image: "messenger.png",
+    category: "backend",
+    projectType: "Real-Time Messaging Platform",
+    duration: "2026",
+    role: "Backend & Full-Stack Developer",
+    github: "https://github.com/Abdelrahmann-Abdelrassoul/Hybrid-Ephemeral-Messenger",
+    live: "",
+    tags: [
+      "Next.js",
+      "Express",
+      "Socket.IO",
+      "Redis",
+      "MongoDB",
+      "Firebase Auth",
+      "Twilio MFA",
+      "Docker",
+      "TypeScript",
+      "AES Encryption"
+    ],
+    cardHighlights: [
+      "Volatile messaging with Redis TTL",
+      "Client-side AES message encryption",
+      "Twilio SMS multi-factor authentication"
+    ],
+    cardChallenge: "Synchronizing UI deletions immediately when messages expire in Redis memory.",
+    summary: "A messaging app built to ensure absolute privacy by deleting messages after a configurable Redis TTL and encrypting them on the client.",
+    problem: "Popular messaging services store texts permanently, exposing user data to leakage. Standard databases lack native TTL deletion mechanisms that notify the user interface in real time.",
+    solution: "I separated data lifetimes: user profiles reside in MongoDB, while messages exist exclusively in Redis with TTLs. By subscribing to Redis expired events, the server instantly notifies clients via Socket.IO to wipe expired text from the UI.",
+    features: [
+      "Secure Google Sign-In with popup auth flow",
+      "Two-factor verification via Twilio SMS Verify",
+      "Volatile messaging with 10s to 120s TTL selection",
+      "Client-side AES encryption via crypto-js before socket delivery",
+      "Real-time user presence roster and typing indicators",
+      "Live system pulse stream tracking auth and database logs"
+    ],
+    challenges: "Synchronizing UI states when Redis deletes keys in the background, and resolving Docker port allocation conflicts with host-level services on Windows.",
+    learning: "Redis keyspace notifications enable real-time UI state sync for volatile data. Encrypting data on the client means database leaks cannot expose raw plain text.",
+    teamSize: "Group Project (4 members)",
+    status: "Completed"
+  },
+  {
+    id: "3",
+    name: "INKIX",
+    slug: "inkix",
+    tagline: "An award-winning mobile-first custom shoe design app and interactive prototype — awarded 1st place in our university UI/UX competition.",
+    description: "INKIX is a UI/UX-focused custom shoe design application built to provide users with an engaging product personalization workflow. Designed using user-centered design methodologies and interactive wireframes in Figma, this project won 1st place among competing teams in the UI/UX design course.",
+    image: "inkix.png",
+    category: "fullstack",
+    projectType: "Mobile App UI/UX Design • Figma Prototype",
+    duration: "2026",
+    role: "Lead UI/UX Designer",
+    github: "",
+    live: "https://www.figma.com/proto/AvIseupe9DKAvAt67s0APG/INKIX?node-id=75-2068&starting-point-node-id=75%3A1981",
+    tags: [
+      "Figma",
+      "UI/UX Design",
+      "Design Thinking",
+      "Interactive Prototyping",
+      "Usability Testing",
+      "Responsive Design"
+    ],
+    cardHighlights: [
+      "Iterative usability testing cycles",
+      "Custom step-by-step product customizer",
+      "Awarded 1st place in UI/UX competition"
+    ],
+    cardChallenge: "Creating clean interactive layouts that support multiple customization options.",
+    summary: "A mobile-first shoe customization app designed in Figma, featuring interactive prototyping and user-centered design, winning 1st place in a UI/UX competition.",
+    problem: "Most online visual customization tools feel cluttered and overwhelm shoppers, leading to user friction and high cart abandonment rates.",
+    solution: "I designed an interactive shoe customization workflow that separates customization stages into intuitive steps, featuring real-time visual previews and a clean order checkout path.",
+    features: [
+      "Interactive step-by-step shoe customizer",
+      "Real-time visual design preview wireframe",
+      "Responsive mobile and desktop high-fidelity prototype layouts",
+      "Seamless user onboarding and visual design prompts",
+      "Fully integrated shopping cart and order summary screen",
+      "Branding guidelines and typography style system"
+    ],
+    challenges: "Designing a complex customization flow that remains clean and uncluttered, and building interactive Figma prototypes that realistically simulate product personalization flows.",
+    learning: "Creating design systems before wireframing saves production time. Usability testing is key to locating and eliminating interface friction.",
+    teamSize: "Group Project (5 members)",
+    status: "Completed"
+  },
+  {
+    id: "4",
+    name: "ZC League",
+    slug: "zc-league",
+    tagline: "A football league management platform with automated standings calculations and role-based access control.",
+    description: "ZC League is a full-stack football league management platform built with React and FastAPI (Python). It replaces manual spreadsheets with automated group scheduling, team rosters, matches, and real-time standings calculations, deployed on Azure Web Apps using GitHub Actions CI/CD.",
+    image: "zcleague.png",
+    category: "fullstack",
+    projectType: "Sports League Management System",
+    duration: "2026",
+    role: "Solo Full-Stack Developer",
+    github: "https://github.com/khalidua/league",
+    live: "https://khalidua.github.io/league/",
+    tags: [
+      "React",
+      "TypeScript",
+      "FastAPI",
+      "Python",
+      "SQLAlchemy",
+      "PostgreSQL",
+      "Cloudinary",
+      "Azure",
+      "CI/CD",
+      "GitHub Actions",
+      "React Bootstrap"
+    ],
+    cardHighlights: [
+      "FastAPI & SQLAlchemy relational engine",
+      "Role-based routing & invitations",
+      "CI/CD deployment to Azure"
+    ],
+    cardChallenge: "Ensuring standings and stats recalculate atomically when scores are submitted.",
+    summary: "An independent full-stack tournament organizer replacing manual league tracking with automated fixture scheduling and relational database standings.",
+    problem: "Organizing university sports leagues using spreadsheets and group chat logs led to scheduling errors, double-booked stadiums, and delayed standings calculations.",
+    solution: "I built ZC League. Organizers input teams, and the FastAPI backend generates schedules. Organizers log score updates, and SQLAlchemy models automatically update group tables and player statistics in PostgreSQL.",
+    features: [
+      "JWT authentication and email verification flows",
+      "Role-Based Access Control (Admin, Organizer, Player)",
+      "Automated round-robin match scheduling",
+      "Interactive tournament bracket and standing tables",
+      "Cloudinary integration for team logo and player photo uploads",
+      "In-app notification system and match invitation flows"
+    ],
+    challenges: "Designing database models and SQLAlchemy relationships that cleanly calculate standings and goals in real time while preventing double-bookings.",
+    learning: "Structuring relational database constraints saves validation code. Using SQLite locally and PostgreSQL on Azure made managing multi-environment database pipelines easy.",
+    teamSize: "Solo Project",
+    status: "Completed"
+  },
+  {
+    id: "5",
+    name: "Social Networking Platform",
+    slug: "social-network",
+    tagline: "A scalable microservices-based social network built with Go, Kafka, Redis, PostgreSQL, and OpenSearch/Grafana observability.",
+    description: "A distributed 6-service social network engineered in Go to eliminate scaling bottlenecks. It decouples posts, profiles, and notifications using Kafka asynchronous event pipelines, caches user feeds in Redis, and runs centralized OpenSearch logging and Grafana dashboards.",
+    image: "social-network.png",
+    category: "backend",
+    projectType: "Microservices Architecture & Observability",
+    duration: "2026",
+    role: "Backend & Infrastructure Developer",
+    github: "https://github.com/Abdelrahmann-Abdelrassoul/Social-Networking-Platform",
+    live: "",
+    tags: [
+      "Go",
+      "Kafka",
+      "Redis",
+      "PostgreSQL",
+      "Docker",
+      "Kubernetes",
+      "OpenSearch",
+      "Grafana",
+      "Google OAuth2",
+      "JWT",
+      "Microservices"
+    ],
+    cardHighlights: [
+      "Go microservices Isolation",
+      "Async event piping with Kafka",
+      "Centralized OpenSearch logging"
+    ],
+    cardChallenge: "Balancing synchronous REST calls and asynchronous message queues across services.",
+    summary: "A Go-based microservices social network designed to explore asynchronous communication, distributed caching, and containerized deployment.",
+    problem: "Monolithic architectures suffer from database congestion and cascading service failures when heavy traffic flows to central data endpoints.",
+    solution: "We divided the app into Go microservices. Writes are pushed to Kafka topics to decouple compute loads, user feeds are cached in Redis, and Kubernetes manages deployment container state.",
+    features: [
+      "Decoupled post and user profile CRUD operations",
+      "Asynchronous activity feeds driven by Kafka message streams",
+      "Centralized logging via OpenSearch",
+      "Google OAuth2 and JWT-based authentication",
+      "Distributed caching using Redis clusters",
+      "Kubernetes deployment manifests for container orchestration"
+    ],
+    challenges: "Coordinating distributed transactions, managing authentication tokens across isolated services, and preventing metrics overlap in monitoring panels.",
+    learning: "Kafka event pipelines make writes highly resilient. Standardizing API contracts with OpenAPI saves debugging hours when integrating decoupled systems.",
+    teamSize: "Group Project (4 members)",
+    status: "Completed"
+  },
+  {
+    id: "6",
+    name: "BingeBox",
+    slug: "bingebox",
+    tagline: "A Netflix-inspired movie streaming frontend featuring Redux Toolkit state management, Chart.js viewing analytics, and Vitest suite coverage.",
+    description: "BingeBox is a streaming platform frontend built with React and Redux Toolkit. It implements watchlist caching, route protection guards, interactive Chart.js analytics, and complete Vitest/React Testing Library unit testing.",
+    image: "bingebox.png",
+    category: "frontend",
+    projectType: "Frontend Web Application",
+    duration: "2025",
+    role: "Frontend Developer",
+    github: "https://github.com/khalidua/BingeBox",
+    live: "https://khalidua.github.io/BingeBox/",
+    tags: [
+      "React 19",
+      "Redux Toolkit",
+      "Tailwind CSS",
+      "React Router",
+      "Framer Motion",
+      "Chart.js",
+      "JSON Server",
+      "Vitest",
+      "TypeScript"
+    ],
+    cardHighlights: [
+      "Redux Toolkit watchlist caching",
+      "Chart.js viewing activity graphs",
+      "Unit tested with Vitest & RTL"
+    ],
+    cardChallenge: "Structuring route guards and synchronizing local state with a mock REST server.",
+    summary: "A Netflix-style media browser built to practice client-side state slices, analytical charts, and component unit testing.",
+    problem: "Streaming catalogs require complicated state handling for watchlists, dynamic search filters, and user routing patterns, which can lag without optimized state slices.",
+    solution: "I built a responsive interface using Redux Toolkit to manage slices of watchlist and authentication state, Framer Motion for animations, and Chart.js to graph viewing stats.",
+    features: [
+      "Dynamic movie catalog browse and search feeds",
+      "Centralized watchlist state using Redux Toolkit",
+      "Route protection guards for general and admin views",
+      "Viewing analytics charts with dynamic metrics visualization",
+      "Mock API integration using JSON Server",
+      "Responsive layout matching Netflix-style branding"
+    ],
+    challenges: "Managing complex state across user settings and lists, and writing robust routing guard logic for admin pages.",
+    learning: "Redux Toolkit simplifies state logic in large applications. Writing Vitest tests forces you to decouple presentation views from state actions.",
+    teamSize: "Group Project (4 members)",
+    status: "Completed"
+  }
 ];
 
 // ======================================================
